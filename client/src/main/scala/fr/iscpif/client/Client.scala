@@ -320,12 +320,12 @@ object Client {
 
 
     val addButtonCalc = button("Compute Kernel").render
-/*
+
     addButtonCalc.onclick(e: dom.Event) => {
 
 
     }
-*/
+
 
     /* HTML tags : */
 

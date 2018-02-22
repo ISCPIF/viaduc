@@ -20,4 +20,3 @@ release/*
 .project
 .settings
 *.bak
-*.js
