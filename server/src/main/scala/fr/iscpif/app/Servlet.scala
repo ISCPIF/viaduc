@@ -35,8 +35,8 @@ class Servlet extends ScalatraServlet {
         tags.script(tags.`type` := "text/javascript", tags.src := "js/plotly-latest.min.js")
       ),
       tags.body(
-        script( "run();")
-    )
+        script("run();")
+      )
     )
   }
 
