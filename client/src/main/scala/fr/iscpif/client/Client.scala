@@ -325,13 +325,11 @@ object Client {
 
     val addButtonCalc = button("Compute Kernel").render
 
-    addButtonCalc.onclick = (e: dom.Event) => {
+    addButtonCalc.onclick = (e: dom.MouseEvent) => {
 
-      println(box_MaxC.value.toDouble)
-/*
       Post[Api].CalcKernel(box_MaxC.value.toDouble, box_MinC.value.toDouble,box_MaxA.value.toDouble, box_MinA.value.toDouble,
        box_MaxT.value.toDouble, box_MinT.value.toDouble).call()
-*/
+
     }
 
 

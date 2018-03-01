@@ -30,8 +30,10 @@ object ApiImpl extends shared.Api {
 
     val (ak, steps) = approximate(vk, rng)
 
-    saveVTK2D(ak, s"/Users/laetitiazaleski/Desktop/results/resparc2_2DDepth${vk.depth}2controls_TRYWeb.vtk")
+    saveVTK2D(ak, s"/Users/laetitiazaleski/Desktop/results/resparc2_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
     saveHyperRectangles(vk)(ak, s"/Users/laetitiazaleski/Desktop/results/resparc2DBWithControlD${vk.depth}_TRYWeb.txt")
+
+    println(steps)
 
     steps
 
