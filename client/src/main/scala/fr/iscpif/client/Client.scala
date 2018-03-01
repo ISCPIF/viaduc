@@ -27,9 +27,13 @@ import com.definitelyscala.plotlyjs.plotlyConts._
 import org.querki.jsext.JSOptionBuilder
 import org.scalajs.dom
 import org.scalajs.dom.raw._
-
+import autowire._
+import shared.Api
 import Array._
 import scala.util.Try
+import scala.concurrent.ExecutionContext.Implicits.global
+import boopickle.Default._
+
 
 object Client {
 
@@ -321,10 +325,14 @@ object Client {
 
     val addButtonCalc = button("Compute Kernel").render
 
-//    addButtonCalc.onclick(e: dom.Event) => {
-//
-//
-//    }
+    addButtonCalc.onclick = (e: dom.Event) => {
+
+      println(box_MaxC.value.toDouble)
+/*
+      Post[Api].CalcKernel(box_MaxC.value.toDouble, box_MinC.value.toDouble,box_MaxA.value.toDouble, box_MinA.value.toDouble,
+       box_MaxT.value.toDouble, box_MinT.value.toDouble).call()
+*/
+    }
 
 
     /* HTML tags : */
