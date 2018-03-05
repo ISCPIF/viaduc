@@ -1,5 +1,6 @@
 package fr.iscpif.app
 
+import scalaz.Alpha.M
 import viabilitree.export._
 import viabilitree.viability._
 import viabilitree.viability.kernel._
@@ -10,15 +11,33 @@ object ApiImpl extends shared.Api {
     println("UUUUUID")
     java.util.UUID.randomUUID.toString
   }
+  // paramètres : max et min sur CAT, parametres de la dynamique, controles
+  def CalcKernel(Cmax: Double, Cmin: Double, Amax: Double, Amin: Double, Tmax: Double, Tmin: Double, l:Double, g:Double,
+                 M:Int, c:Double, p:Double, a:Double, e:Double, eta: Double, phi:Double, phi2:Double, d:Double,
+                 del:Double, h:Double, mp:Double, mt:Double): Int = {
 
-  def CalcKernel(Cmax: Double, Cmin: Double, Amax: Double, Amin: Double, Tmax: Double, Tmin: Double): Int = {
+    val parc = Parc3D()
+    parc.l = l
+    parc.g = g
+    parc.M = M
+    parc.c = c
+    parc.p = p
+    parc.a = a
+    parc.e = e
+    parc.eta = eta
+    parc.phi = phi
+    parc.phi2 = phi2
+    parc.d = d
+    parc.del = del
+    parc.h = h
+    parc.mp = mp
+    parc.mt = mt
 
-    val parc = Parc2D_B()
     val rng = new util.Random(42)
     val vk = KernelComputation(
       dynamic = parc.dynamic,
-      depth = 10,
-      zone = Vector((Amin, Amax), (Tmin, Tmax)),
+      depth = 12,
+      zone = Vector((Cmin, Cmax),(Amin, Amax), (Tmin, Tmax)),
       // controls = Vector((0.02 to 0.4 by 0.02 ))
       controls = (x: Vector[Double]) =>
         for {
@@ -30,8 +49,8 @@ object ApiImpl extends shared.Api {
 
     val (ak, steps) = approximate(vk, rng)
 
-    saveVTK2D(ak, s"/Users/laetitiazaleski/Desktop/results/resparc2_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
-    saveHyperRectangles(vk)(ak, s"/Users/laetitiazaleski/Desktop/results/resparc2DBWithControlD${vk.depth}_TRYWeb.txt")
+    saveVTK3D(ak, s"/Users/laetitiazaleski/Desktop/results/resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
+    saveHyperRectangles(vk)(ak, s"/Users/laetitiazaleski/Desktop/results/resparc3DBWithControlD${vk.depth}_TRYWeb.txt")
 
     println(steps)
 

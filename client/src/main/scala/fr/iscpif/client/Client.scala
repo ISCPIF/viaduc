@@ -62,7 +62,7 @@ object Client {
 
     val box_l = input(
       `type` := "text",
-      value := "0.01"
+      value := "0.1"
     ).render
 
     /*  val output_l = span.render
@@ -94,7 +94,7 @@ object Client {
 
     val box_p = input(
       `type` := "text",
-      value := "0.2"
+      value := "0.1"
     ).render
 
     val box_a = input(
@@ -109,7 +109,7 @@ object Client {
 
     val box_eta = input(
       `type` := "text",
-      value := "0.0005"
+      value := "0.00005"
     ).render
 
     val box_phi = input(
@@ -206,13 +206,13 @@ object Client {
     // controles et valeur init:
 
     val eps = 100.0
-    val zeta = 0.01
+    val zeta = 0.1
     val Cinit = 10000.0
     val Ainit = 5000.0
     val Tinit = 5000.0
-    val t_max = 1000
+    val t_max = 500
 
-    var Cval = Array(Cinit)
+    var Cval = Array(Cinit/10)
     var Aval = Array(Ainit)
     var Tval = Array(Tinit)
     var time = Array(0)
@@ -222,9 +222,9 @@ object Client {
       val Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, Cval.last, Aval.last, Tval.last)
+        box_mt.value.toDouble, Cval.last*10, Aval.last, Tval.last)
 
-      Cval = concat(Cval, Array(Cat(0)))
+      Cval = concat(Cval, Array(Cat(0)/10))
       Aval = concat(Aval, Array(Cat(1)))
       Tval = concat(Tval, Array(Cat(2)))
       time = concat(time, Array(t))
@@ -249,19 +249,19 @@ object Client {
     val data1 = data
       .x(time.toJSArray)
       .y(Cval.toJSArray)
-      .set(plotlymarker.size(12.0).set(plotlycolor.rgb(180, 0, 0)))
+      .set(plotlymarker.size(1.0).set(plotlycolor.rgb(180, 0, 0)))
       .name("C")
 
     val data2 = data
       .x(time.toJSArray)
       .y(Aval.toJSArray)
-      .set(plotlymarker.size(10.0).set(plotlycolor.rgb(0, 136, 170)).set(plotlysymbol.cross))
+      .set(plotlymarker.size(1.0).set(plotlycolor.rgb(0, 136, 170)).set(plotlysymbol.cross))
       .name("A")
 
     val data3 = data
       .x(time.toJSArray)
       .y(Tval.toJSArray)
-      .set(plotlymarker.size(10.0).set(plotlycolor.rgb(50, 205, 50)).set(plotlysymbol.cross))
+      .set(plotlymarker.size(1.0).set(plotlycolor.rgb(50, 205, 50)).set(plotlysymbol.cross))
       .name("T")
 
     // val config = Config.displayModeBar(false)
@@ -288,9 +288,9 @@ object Client {
         val Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
           eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-          box_mt.value.toDouble, Cval.last, Aval.last, Tval.last)
+          box_mt.value.toDouble, Cval.last*10, Aval.last, Tval.last)
 
-        Cval = concat(Cval, Array(Cat(0)))
+        Cval = concat(Cval, Array(Cat(0)/10))
         Aval = concat(Aval, Array(Cat(1)))
         Tval = concat(Tval, Array(Cat(2)))
         time = concat(time, Array(t))
@@ -300,19 +300,19 @@ object Client {
       val data1 = data
         .x(time.toJSArray)
         .y(Cval.toJSArray)
-        .set(plotlymarker.size(12.0).set(plotlycolor.rgb(180, 0, 0)))
+        .set(plotlymarker.size(1.0).set(plotlycolor.rgb(180, 0, 0)))
         .name("C")
 
       val data2 = data
         .x(time.toJSArray)
         .y(Aval.toJSArray)
-        .set(plotlymarker.size(10.0).set(plotlycolor.rgb(0, 136, 170)).set(plotlysymbol.cross))
+        .set(plotlymarker.size(1.0).set(plotlycolor.rgb(0, 136, 170)).set(plotlysymbol.cross))
         .name("A")
 
       val data3 = data
         .x(time.toJSArray)
         .y(Tval.toJSArray)
-        .set(plotlymarker.size(10.0).set(plotlycolor.rgb(50, 205, 50)).set(plotlysymbol.cross))
+        .set(plotlymarker.size(1.0).set(plotlycolor.rgb(50, 205, 50)).set(plotlysymbol.cross))
         .name("T")
 
       // val config = Config.displayModeBar(false)
@@ -328,7 +328,10 @@ object Client {
     addButtonCalc.onclick = (e: dom.MouseEvent) => {
 
       Post[Api].CalcKernel(box_MaxC.value.toDouble, box_MinC.value.toDouble,box_MaxA.value.toDouble, box_MinA.value.toDouble,
-       box_MaxT.value.toDouble, box_MinT.value.toDouble).call()
+       box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
+          box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+        box_phi.value.toDouble, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_h.value.toDouble,
+        box_mp.value.toDouble, box_mt.value.toDouble).call()
 
     }
 
@@ -349,15 +352,10 @@ object Client {
           "Here you can change the parameters:"
         ),
 
-        p("zeta:"),
-        div(box_zeta),
         p("l:"),
         div(box_l),
-        p("l current value : "),
-        div(box_l.value),
         p("g:"),
         div(box_g),
-        p("g current value : "),
         p("M:"),
         div(box_M),
         p("h:"),
