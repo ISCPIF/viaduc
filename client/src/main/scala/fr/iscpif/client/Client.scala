@@ -29,11 +29,13 @@ import org.scalajs.dom
 import org.scalajs.dom.raw._
 import autowire._
 import shared.Api
+
 import Array._
 import scala.util.Try
 import scala.concurrent.ExecutionContext.Implicits.global
 import boopickle.Default._
 
+import scala.util.{Failure, Success}
 
 object Client {
 
@@ -335,6 +337,32 @@ object Client {
 
     }
 
+    val addButtonVideOrNot = button("Show Kernel").render
+    var affichage = "hello"
+
+    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
+
+       Post[Api].VideOrnot("results/resparc2DBWithControlD10_TRYWeb.txt").call()
+
+         .onComplete {
+         case Success(b) =>
+          if(b){
+            affichage = "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+          }else{
+            affichage = "Congratulation, your Kernel is not empty !"
+          }
+         case Failure(t) =>
+           affichage = "Could not process file"
+      }
+
+
+
+
+
+
+
+    }
+
 
     /* HTML tags : */
 
@@ -411,7 +439,9 @@ object Client {
         div(box_MaxT),
         p("Minimum on the number of tourists :"),
         div(box_MinT),
-        div(addButtonCalc)
+        div(addButtonCalc),
+        div(addButtonVideOrNot),
+        p(affichage)
 
       ).render
     )

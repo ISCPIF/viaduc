@@ -1,6 +1,5 @@
 package fr.iscpif.app
 
-import viabilitree.export._
 import viabilitree.viability._
 import viabilitree.viability.kernel._
 
@@ -28,9 +27,17 @@ object Parc2DViabilityKernel extends App {
 
   println(steps)
 
+  /*
 
-  saveVTK2D(ak, s"/Users/laetitiazaleski/Desktop/results/resparc2_2DDepth${vk.depth}2controls_TRY1_BeaucoupAnim.vtk")
-  saveHyperRectangles(vk)(ak,s"/Users/laetitiazaleski/Desktop/results/resparc2DBWithControlD${vk.depth}_TRY1_BeaucoupAnim.txt")
+  val b = ApiImpl.VideOrnot("/Users/laetitiazaleski/Desktop/results/resparc2DBWithControlD14_TRY1_BeaucoupAnim.txt")
+
+  if(b){
+    println("vide")
+  }else{
+    println("non vide")
+  }
+*/
+
   // saveHyperRectangles(vk)(ak,s"/tmp/resparcWithControlD${vk.depth}.txt")
 
   //println(volume(res))

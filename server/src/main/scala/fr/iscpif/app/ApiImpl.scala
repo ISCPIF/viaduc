@@ -4,6 +4,9 @@ import scalaz.Alpha.M
 import viabilitree.export._
 import viabilitree.viability._
 import viabilitree.viability.kernel._
+import viabilitree.viability.kernel.KernelComputation
+import scala.io.Source
+
 
 object ApiImpl extends shared.Api {
 
@@ -57,4 +60,17 @@ object ApiImpl extends shared.Api {
     steps
 
   }
+
+  def VideOrnot(fileName: String): Boolean = {
+
+    val file = Source.fromFile(fileName)
+
+    val fileContents = file.getLines.mkString
+
+    file.close()
+
+    fileContents.isEmpty()
+
+  }
+  
 }
