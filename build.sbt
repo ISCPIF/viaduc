@@ -14,11 +14,12 @@ val boopickleVersion = "1.2.6"
 val rxVersion = "0.3.2"
 val scaladgetVersion = "0.9.4"
 val scalajsDomVersion = "0.9.3"
+val betterFilesVersion = "3.2.0"
 val Resolvers = Seq(Resolver.sonatypeRepo("snapshots"),
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-def viabilitreeVersion = "2.0-alpha6"
+def viabilitreeVersion = "2.0-alpha7"
 
 lazy val shared = project.in(file("shared")).settings(
   scalaVersion := ScalaVersion
@@ -61,7 +62,8 @@ lazy val server = project.in(file("server")) settings(
     "org.eclipse.jetty" % "jetty-webapp" % jettyVersion,
     "org.eclipse.jetty" % "jetty-server" % jettyVersion,
     "fr.iscpif.viabilitree" %% "export" % viabilitreeVersion,
-    "fr.iscpif.viabilitree" %% "viability" % viabilitreeVersion
+    "fr.iscpif.viabilitree" %% "viability" % viabilitreeVersion,
+    "com.github.pathikrit" %% "better-files" % betterFilesVersion
   )
 ) dependsOn (shared) enablePlugins (ScalatraPlugin)
 

@@ -1,10 +1,14 @@
 package fr.iscpif.app
 
+import better.files._
+
 import scalaz.Alpha.M
 import viabilitree.export._
 import viabilitree.viability._
 import viabilitree.viability.kernel._
 import viabilitree.viability.kernel.KernelComputation
+import shared.Data._
+
 import scala.io.Source
 
 
@@ -17,7 +21,7 @@ object ApiImpl extends shared.Api {
   // paramètres : max et min sur CAT, parametres de la dynamique, controles
   def CalcKernel(Cmax: Double, Cmin: Double, Amax: Double, Amin: Double, Tmax: Double, Tmin: Double, l:Double, g:Double,
                  M:Int, c:Double, p:Double, a:Double, e:Double, eta: Double, phi:Double, phi2:Double, d:Double,
-                 del:Double, h:Double, mp:Double, mt:Double): Int = {
+                 del:Double, h:Double, mp:Double, mt:Double): KernelResult = {
 
     val parc = Parc3D()
     parc.l = l
@@ -52,12 +56,12 @@ object ApiImpl extends shared.Api {
 
     val (ak, steps) = approximate(vk, rng)
 
-    saveVTK3D(ak, s"/Users/laetitiazaleski/Desktop/results/resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
-    saveHyperRectangles(vk)(ak, s"/Users/laetitiazaleski/Desktop/results/resparc3DBWithControlD${vk.depth}_TRYWeb.txt")
+    saveVTK3D(ak, Settings.tmpDirectory / s"resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
+    saveHyperRectangles(vk)(ak, Settings.tmpDirectory / s"resparc3DBWithControlD${vk.depth}_TRYWeb.txt")
 
     println(steps)
 
-    steps
+    KernelResult(steps, File("results/resparc2DBWithControlD10_TRYWeb.txt").isEmpty)
 
   }
 

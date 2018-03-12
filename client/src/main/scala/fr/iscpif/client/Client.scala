@@ -340,28 +340,28 @@ object Client {
     val addButtonVideOrNot = button("Show Kernel").render
     var affichage = "hello"
 
-    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
-
-       Post[Api].VideOrnot("results/resparc2DBWithControlD10_TRYWeb.txt").call()
-
-         .onComplete {
-         case Success(b) =>
-          if(b){
-            affichage = "Your Kernel is empty, please try again by changing your controls and/or your constraints."
-          }else{
-            affichage = "Congratulation, your Kernel is not empty !"
-          }
-         case Failure(t) =>
-           affichage = "Could not process file"
-      }
-
-
+//    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
+//
+//       Post[Api].VideOrnot("results/resparc2DBWithControlD10_TRYWeb.txt").call()
+//
+//         .onComplete {
+//         case Success(b) =>
+//          if(b){
+//            affichage = "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+//          }else{
+//            affichage = "Congratulation, your Kernel is not empty !"
+//          }
+//         case Failure(t) =>
+//           affichage = "Could not process file"
+//      }
 
 
 
 
 
-    }
+
+
+   // }
 
 
     /* HTML tags : */
