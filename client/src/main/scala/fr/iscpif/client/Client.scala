@@ -18,6 +18,8 @@ import scala.scalajs
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom.all._
+import scala.util.matching._
+import scala.io.Source
 
 import scala.scalajs.js.JSConverters._
 import com.definitelyscala.plotlyjs._
@@ -339,6 +341,8 @@ object Client {
 
     val addButtonVideOrNot = button("Show Kernel").render
     var affichage = "hello"
+
+
 
 //    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
 //
