@@ -1,4 +1,4 @@
-package client
+package fr.iscpif.client
 
 import java.nio.ByteBuffer
 
@@ -31,6 +31,8 @@ import org.scalajs.dom
 import org.scalajs.dom.raw._
 import autowire._
 import shared.Api
+import shared.Data._
+import scaladget.tools.JsRxTags._
 
 import Array._
 import scala.util.Try
@@ -38,13 +40,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import boopickle.Default._
 
 import scala.util.{Failure, Success}
+import rx._
 
 object Client {
 
 
-
   @JSExportTopLevel("run")
   def run() {
+    implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
     lazy val rng = scala.util.Random
 
     def randomDoubles(nb: Int = 100, ratio: Int = 1000) = Seq.fill(nb)(rng.nextDouble * ratio).toJSArray
@@ -59,10 +62,10 @@ object Client {
       value := "0.01"
     ).render
 
-    box_zeta.onkeyup= (e: dom.Event) => println(box_zeta.value)
+    box_zeta.onkeyup = (e: dom.Event) => println(box_zeta.value)
 
 
-    val output_zeta= box_zeta.value
+    val output_zeta = box_zeta.value
 
     val box_l = input(
       `type` := "text",
@@ -216,7 +219,7 @@ object Client {
     val Tinit = 5000.0
     val t_max = 500
 
-    var Cval = Array(Cinit/10)
+    var Cval = Array(Cinit / 10)
     var Aval = Array(Ainit)
     var Tval = Array(Tinit)
     var time = Array(0)
@@ -226,9 +229,9 @@ object Client {
       val Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, Cval.last*10, Aval.last, Tval.last)
+        box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
 
-      Cval = concat(Cval, Array(Cat(0)/10))
+      Cval = concat(Cval, Array(Cat(0) / 10))
       Aval = concat(Aval, Array(Cat(1)))
       Tval = concat(Tval, Array(Cat(2)))
       time = concat(time, Array(t))
@@ -280,7 +283,6 @@ object Client {
     val addButton = button("Plot").render
 
 
-
     addButton.onclick = (e: dom.Event) => {
       var Cval = Array(Cinit)
       var Aval = Array(Ainit)
@@ -292,9 +294,9 @@ object Client {
         val Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
           eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-          box_mt.value.toDouble, Cval.last*10, Aval.last, Tval.last)
+          box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
 
-        Cval = concat(Cval, Array(Cat(0)/10))
+        Cval = concat(Cval, Array(Cat(0) / 10))
         Aval = concat(Aval, Array(Cat(1)))
         Tval = concat(Tval, Array(Cat(2)))
         time = concat(time, Array(t))
@@ -327,19 +329,10 @@ object Client {
     }
 
 
-    val addButtonCalc = button("Compute Kernel").render
-
-    addButtonCalc.onclick = (e: dom.MouseEvent) => {
-
-      Post[Api].CalcKernel(box_MaxC.value.toDouble, box_MinC.value.toDouble,box_MaxA.value.toDouble, box_MinA.value.toDouble,
-       box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
-          box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-        box_phi.value.toDouble, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_h.value.toDouble,
-        box_mp.value.toDouble, box_mt.value.toDouble).call()
-
-    }
+    val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
 
     val addButtonVideOrNot = button("Show Kernel").render
+<<<<<<< HEAD
     var affichage = "hello"
 
 
@@ -361,17 +354,45 @@ object Client {
 
 
 
+=======
+    lazy val addButtonCalc = button("Compute Kernel",
+      onclick := { () =>
+        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+        Post[Api].CalcKernel(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
+          box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
+          box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+          box_phi.value.toDouble, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_h.value.toDouble,
+          box_mp.value.toDouble, box_mt.value.toDouble).call().foreach { kr: KernelResult =>
+          kernelStatus() = KernelStatus.computedKernel(kr)
+        }
+      }
+    )
+>>>>>>> origin/master
 
 
+    //    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
+    //
+    //       Post[Api].VideOrnot("results/resparc2DBWithControlD10_TRYWeb.txt").call()
+    //
+    //         .onComplete {
+    //         case Success(b) =>
+    //          if(b){
+    //            affichage = "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+    //          }else{
+    //            affichage = "Congratulation, your Kernel is not empty !"
+    //          }
+    //         case Failure(t) =>
+    //           affichage = "Could not process file"
+    //      }
 
 
-   // }
+    // }
 
 
     /* HTML tags : */
 
     dom.document.body.appendChild(
-      div( width:= "100%", height := "100%")(
+      div(width := "100%", height := "100%")(
         h1("Step 2:"),
         h2("Equation : "),
         img(src := "img/CAT_Schemat.png"),
@@ -445,7 +466,26 @@ object Client {
         div(box_MinT),
         div(addButtonCalc),
         div(addButtonVideOrNot),
-        p(affichage)
+        p(
+           Rx{
+          kernelStatus() match {
+            case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
+              kr.message
+            case kr: KernelStatus =>
+             // val kr = kernelStatus.now
+              s"""
+                    ${kr.message} :: ${
+                if (kr.kernelResult.map {
+                  _.isResultEmpty
+                }.getOrElse(false))
+                  "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+                else
+                  "Congratulation, your Kernel is not empty !"
+              }
+                    """
+          }
+        }
+        )
 
       ).render
     )

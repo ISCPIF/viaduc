@@ -1,4 +1,4 @@
-package client
+package fr.iscpif.client
 
 object CAT_RK4 {
 

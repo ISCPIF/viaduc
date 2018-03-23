@@ -39,7 +39,7 @@ lazy val client = project.in(file("client")) settings(
     "fr.iscpif" %%% "scaladget" % scaladgetVersion,
     "org.scala-js" %%% "scalajs-dom" % scalajsDomVersion,
     "org.json4s" %% "json4s-jackson" % json4sVersion,
-    "fr.iscpif" %%% "scaladget" % "0.9.6-SNAPSHOT",
+    "fr.iscpif" %%% "scaladget" % scaladgetVersion,
     "com.definitelyscala" %%% "scala-js-plotlyjs" % "1.1.4",
     "com.lihaoyi" %%% "sourcecode" % "0.1.2"
   )
