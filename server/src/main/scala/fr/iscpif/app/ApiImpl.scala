@@ -15,50 +15,54 @@ import scala.io.Source
 object ApiImpl extends shared.Api {
 
   // paramètres : max et min sur CAT, parametres de la dynamique, controles
-  def CalcKernel(Cmax: Double, Cmin: Double, Amax: Double, Amin: Double, Tmax: Double, Tmin: Double, l:Double, g:Double,
-                 M:Int, c:Double, p:Double, a:Double, e:Double, eta: Double, phi:Double, phi2:Double, d:Double,
-                 del:Double, h:Double, mp:Double, mt:Double): KernelResult = {
+  def CalcKernel(parameters: KernelParameters): KernelResult = {
 
-    val parc = Parc3D()
-    parc.l = l
-    parc.g = g
-    parc.M = M
-    parc.c = c
-    parc.p = p
-    parc.a = a
-    parc.e = e
-    parc.eta = eta
-    parc.phi = phi
-    parc.phi2 = phi2
-    parc.d = d
-    parc.del = del
-    parc.h = h
-    parc.mp = mp
-    parc.mt = mt
+    val resFile = Utils.file(parameters)
 
-    val rng = new util.Random(42)
-    val vk = KernelComputation(
-      dynamic = parc.dynamic,
-      depth = 12,
-      zone = Vector((Cmin, Cmax),(Amin, Amax), (Tmin, Tmax)),
-      // controls = Vector((0.02 to 0.4 by 0.02 ))
-      controls = (x: Vector[Double]) =>
-        for {
-          c1 <- (0.03 to 0.031 by 0.001)
-          c2 <- (0.0 to 10.0 by 10.0)
-        } yield Control(c1, c2)
+    resFile.exists match {
+      case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
+      case false =>
+        val parc = Parc3D()
+        parc.l = parameters.l
+        parc.g = parameters.g
+        parc.M = parameters.M
+        parc.c = parameters.c
+        parc.p = parameters.p
+        parc.a = parameters.a
+        parc.e = parameters.e
+        parc.eta = parameters.eta
+        parc.phi = parameters.phi
+        parc.phi2 = parameters.phi2
+        parc.d = parameters.d
+        parc.del = parameters.del
+        parc.h = parameters.h
+        parc.mp = parameters.mp
+        parc.mt = parameters.mt
 
-    )
+        val rng = new util.Random(42)
+        val vk = KernelComputation(
+          dynamic = parc.dynamic,
+          depth = 12,
+          zone = Vector((parameters.Cmin, parameters.Cmax), (parameters.Amin, parameters.Amax), (parameters.Tmin, parameters.Tmax)),
+          // controls = Vector((0.02 to 0.4 by 0.02 ))
+          controls = (x: Vector[Double]) =>
+            for {
+              c1 <- (0.03 to 0.031 by 0.001)
+              c2 <- (0.0 to 10.0 by 10.0)
+            } yield Control(c1, c2)
 
-    val (ak, steps) = approximate(vk, rng)
+        )
 
-    saveVTK3D(ak, Settings.tmpDirectory / s"resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
-    saveHyperRectangles(vk)(ak, Settings.tmpDirectory / s"resparc3DBWithControlD${vk.depth}_TRYWeb.txt")
+        val (ak, steps) = approximate(vk, rng)
 
-    println(steps)
+        //saveVTK3D(ak, Settings.tmpDirectory / s"resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
+        val kernelFile = Utils.file(parameters)
+        saveHyperRectangles(vk)(ak, kernelFile)
 
-    KernelResult(steps, File("results/resparc2DBWithControlD10_TRYWeb.txt").isEmpty)
+        println(steps)
 
+        KernelResult(kernelFile.toJava.getAbsolutePath, kernelFile.isEmpty)
+    }
   }
-  
+
 }

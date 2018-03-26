@@ -333,35 +333,15 @@ object Client {
     lazy val addButtonCalc = button("Compute Kernel",
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
-        Post[Api].CalcKernel(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
+        Post[Api].CalcKernel(KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
           box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
           box_phi.value.toDouble, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_h.value.toDouble,
-          box_mp.value.toDouble, box_mt.value.toDouble).call().foreach { kr: KernelResult =>
+          box_mp.value.toDouble, box_mt.value.toDouble)).call().foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
         }
       }
     )
-
-
-    //    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
-    //
-    //       Post[Api].VideOrnot("results/resparc2DBWithControlD10_TRYWeb.txt").call()
-    //
-    //         .onComplete {
-    //         case Success(b) =>
-    //          if(b){
-    //            affichage = "Your Kernel is empty, please try again by changing your controls and/or your constraints."
-    //          }else{
-    //            affichage = "Congratulation, your Kernel is not empty !"
-    //          }
-    //         case Failure(t) =>
-    //           affichage = "Could not process file"
-    //      }
-
-
-    // }
-
 
     /* HTML tags : */
 
@@ -441,29 +421,25 @@ object Client {
         div(addButtonCalc),
         div(addButtonVideOrNot),
         p(
-           Rx{
-          kernelStatus() match {
-            case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
-              kr.message
-            case kr: KernelStatus =>
-             // val kr = kernelStatus.now
-              s"""
-                    ${kr.message} :: ${
-                if (kr.kernelResult.map {
-                  _.isResultEmpty
-                }.getOrElse(false))
-                  "Your Kernel is empty, please try again by changing your controls and/or your constraints."
-                else
-                  "Congratulation, your Kernel is not empty !"
-              }
-                    """
+          Rx {
+            kernelStatus() match {
+              case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
+                kr.message
+              case ks: KernelStatus =>
+                ks.kernelResult match {
+                  case None => "Weird case ..."
+                  case Some(kr: KernelResult) =>
+                    // val kr = kernelStatus.now
+                    s"${ks.message} :: " + {
+                      if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+                      else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
+                    }
+                }
+            }
           }
-        }
         )
-
       ).render
     )
-
   }
 }
 
