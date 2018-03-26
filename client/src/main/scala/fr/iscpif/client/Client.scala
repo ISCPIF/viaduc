@@ -18,6 +18,8 @@ import scala.scalajs
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom.all._
+import scala.util.matching._
+import scala.io.Source
 
 import scala.scalajs.js.JSConverters._
 import com.definitelyscala.plotlyjs._
@@ -330,6 +332,29 @@ object Client {
     val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
 
     val addButtonVideOrNot = button("Show Kernel").render
+<<<<<<< HEAD
+    var affichage = "hello"
+
+
+
+//    addButtonVideOrNot.onclick = (e: dom.MouseEvent) => {
+//
+//       Post[Api].VideOrnot("results/resparc2DBWithControlD10_TRYWeb.txt").call()
+//
+//         .onComplete {
+//         case Success(b) =>
+//          if(b){
+//            affichage = "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+//          }else{
+//            affichage = "Congratulation, your Kernel is not empty !"
+//          }
+//         case Failure(t) =>
+//           affichage = "Could not process file"
+//      }
+
+
+
+=======
     lazy val addButtonCalc = button("Compute Kernel",
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
@@ -342,6 +367,7 @@ object Client {
         }
       }
     )
+>>>>>>> origin/master
 
     /* HTML tags : */
 
