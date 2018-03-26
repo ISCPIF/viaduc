@@ -1,5 +1,7 @@
 import java.io.File
+
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+
 
 val Organization = "fr.iscpif"
 val Name = "simparc-UI"
@@ -12,10 +14,11 @@ val scalatagsVersion = "0.6.7"
 val autowireVersion = "0.2.6"
 val boopickleVersion = "1.2.6"
 val rxVersion = "0.3.2"
-val scaladgetVersion = "0.9.4"
+val scaladgetVersion = "1.0.1"
 val scalajsDomVersion = "0.9.3"
 val betterFilesVersion = "3.2.0"
 val Resolvers = Seq(Resolver.sonatypeRepo("snapshots"),
+  Resolver.sonatypeRepo("releases"),
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
@@ -29,21 +32,20 @@ lazy val client = project.in(file("client")) settings(
   version := Version,
   scalaVersion := ScalaVersion,
   resolvers in ThisBuild ++= Resolvers,
-  skip in packageJSDependencies := false,
-  jsDependencies += "org.webjars" % "d3js" % "4.2.1" / "d3.min.js",
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "autowire" % autowireVersion,
     "io.suzaku" %%% "boopickle" % boopickleVersion,
     "com.lihaoyi" %%% "scalatags" % scalatagsVersion,
-    "com.lihaoyi" %%% "scalarx" % rxVersion,
-    "fr.iscpif" %%% "scaladget" % scaladgetVersion,
+    "com.lihaoyi" %% "scalarx" % rxVersion,
+    "fr.iscpif" %% "scaladget" % scaladgetVersion,
     "org.scala-js" %%% "scalajs-dom" % scalajsDomVersion,
     "org.json4s" %% "json4s-jackson" % json4sVersion,
-    "fr.iscpif" %%% "scaladget" % scaladgetVersion,
+    "fr.iscpif.scaladget" %%% "bootstrapnative" % scaladgetVersion,
+    "fr.iscpif.scaladget" %%% "tools" % scaladgetVersion,
     "com.definitelyscala" %%% "scala-js-plotlyjs" % "1.1.4",
     "com.lihaoyi" %%% "sourcecode" % "0.1.2"
   )
-) dependsOn (shared) enablePlugins (ScalaJSPlugin)
+) dependsOn (shared) enablePlugins (ExecNpmPlugin)
 
 lazy val server = project.in(file("server")) settings(
   organization := Organization,
@@ -73,33 +75,14 @@ lazy val bootstrap = project.in(file("target/bootstrap")) settings(
   version := Version,
   scalaVersion := ScalaVersion,
   go := {
-    val clientTarget = (fullOptJS in client in Compile).value
-    val clientResource = (resourceDirectory in client in Compile).value
-    val serverTarget = (target in server in Compile).value
 
-    copy(clientTarget, clientResource, new File(serverTarget, "webapp"))
-  }
-) dependsOn(client, server)
+    val demoTarget = (target in server in Compile).value
+    val demoResource = (resourceDirectory in client in Compile).value
+    val jsTarget = demoTarget / "webapp/js"
+    val demoJS = (fullOptJS in client in Compile).value
 
-def copy(clientTarget: Attributed[File], resources: File, webappServerTarget: File) = {
-  clientTarget.map { ct =>
-    val depName = ct.getName.replace("opt.js", "jsdeps.min.js")
-    recursiveCopy(new File(resources, "webapp"), webappServerTarget)
-    recursiveCopy(ct, new File(webappServerTarget, "js/" + ct.getName))
-    recursiveCopy(new File(ct.getParent, depName), new File(webappServerTarget, "js/" + depName))
+    IO.copyFile(demoJS.data, jsTarget / "viaduc.js")
+    IO.copyFile(dependencyFile.value, jsTarget / "deps.js")
+    IO.copyDirectory(demoResource , demoTarget )
   }
-}
-
-def recursiveCopy(from: File, to: File): Unit = {
-  if (from.isDirectory) {
-    to.mkdirs()
-    for {
-      f ← from.listFiles()
-    } recursiveCopy(f, new File(to, f.getName))
-  }
-  else if (!to.exists() || from.lastModified() > to.lastModified) {
-    println(s"Copy file $from to $to ")
-    from.getParentFile.mkdirs
-    IO.copyFile(from, to, preserveLastModified = true)
-  }
-}
+) dependsOn(client, server) enablePlugins (ExecNpmPlugin)
