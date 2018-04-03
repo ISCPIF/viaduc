@@ -357,7 +357,6 @@ object Client {
       "in the parc, T represents the number of tourists in the parc", padding := 10)
 
     val theTabs = tabs.
-      closable(false, (t: Tab) => println(" " + t.title)).
       add("About the equations", div1,
         onclickExtra = () => println("Tab1 pressed"),
         onAddedTab = (t: Tab) => println(s"${t.title} has been added"),
