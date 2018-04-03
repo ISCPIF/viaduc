@@ -42,6 +42,10 @@ import boopickle.Default._
 import scala.util.{Failure, Success}
 import rx._
 
+import scaladget.bootstrapnative.bsn._
+
+
+
 object Client {
 
 
@@ -340,23 +344,42 @@ object Client {
           box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
           box_phi.value.toDouble, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_h.value.toDouble,
-          box_mp.value.toDouble, box_mt.value.toDouble)).call().foreach { kr: KernelResult =>
+          box_mp.value.toDouble, box_mt.value.toDouble, box_MaxEps.value.toDouble,box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
+          box_MinZeta.value.toDouble)).call().foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
         }
       }
     )
 
-    /* HTML tags : */
+
+
+    val div1 = div("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) " +
+      "in the parc, T represents the number of tourists in the parc", padding := 10)
+
+    val theTabs = tabs.
+      closable(false, (t: Tab) => println(" " + t.title)).
+      add("About the equations", div1,
+        onclickExtra = () => println("Tab1 pressed"),
+        onAddedTab = (t: Tab) => println(s"${t.title} has been added"),
+        onRemovedTab = (t: Tab) => println(s"${t.title} has been removed")).
+      add("Scheme", img(src := "img/CAT_Schemat.png")).
+      add("Equation", img(src := "img/CAT_Equation.png"))
+
+
+      /* HTML tags : */
 
     dom.document.body.appendChild(
       div(width := "100%", height := "100%")(
-        h1("Step 2:"),
-        h2("Equation : "),
-        img(src := "img/CAT_Schemat.png"),
-        p("C represents the fishermen's capital (boats, income...)"),
-        p("A represents the number of Animals (turtles) in the parc "),
-        p("T represents the number of tourists in the parc"),
-        img(src := "img/CAT_Equation.png"),
+        h1("Welcome to Viaduc: "),
+        theTabs.render(pills),
+
+        /*   img(src := "img/CAT_Schemat.png"),
+
+          div(
+             buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
+             onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
+
+           img(src := "img/CAT_Equation.png"), */
         h2("Set up the parameters:"),
         p(
           "Here you can change the parameters:"

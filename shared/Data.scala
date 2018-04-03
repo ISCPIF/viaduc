@@ -22,7 +22,11 @@ object Data {
                               del: Double,
                               h: Double,
                               mp: Double,
-                              mt: Double
+                              mt: Double,
+                              epsMax: Double,
+                              epsMin: Double,
+                              zetaMax: Double,
+                              zetaMin: Double,
                              )
 
   case class KernelResult(resultPath: String, isResultEmpty: Boolean)
