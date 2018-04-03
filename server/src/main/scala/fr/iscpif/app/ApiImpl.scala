@@ -41,22 +41,22 @@ object ApiImpl extends shared.Api {
 
         val rng = new util.Random(42)
 
+        var zmax = parameters.zetaMax * 0.01
+        var zmin = parameters.zetaMin * 0.01
+
         if(parameters.zetaMin > parameters.zetaMax){
-          val zmin = parameters.zetaMax /100
-          val zmax = parameters.zetaMin /100
+           zmin = parameters.zetaMax * 0.01
+           zmax = parameters.zetaMin * 0.01
         }
-        else {
-          val zmax = parameters.zetaMax /100
-          val zmin = parameters.zetaMin /100
+        var emax = parameters.epsMax
+        var emin = parameters.epsMin
+
+        if(parameters.epsMin > parameters.epsMax) {
+          emax = parameters.epsMin
+          emin = parameters.epsMax
         }
-        if(parameters.epsMin > parameters.epsMax){
-          val emax = parameters.epsMin
-          val emin = parameters.epsMax
-        }
-        else {
-          val emax = parameters.epsMax
-          val emin = parameters.epsMin
-        }
+
+        println(s"emin : $emin, emax: $emax, zmin: $zmin, zmax : $zmax")
 
         val vk = KernelComputation(
           dynamic = parc.dynamic,
@@ -65,8 +65,8 @@ object ApiImpl extends shared.Api {
           // controls = Vector((0.02 to 0.4 by 0.02 ))
           controls = (x: Vector[Double]) =>
             for {
-              c1 <- (parameters.zetaMin to parameters.zetaMax by 0.001)
-              c2 <- (parameters.epsMin to parameters.epsMin by 10.0)
+              c1 <- (zmin to zmax by 0.001)
+              c2 <- (emin to emax by 10.0)
             } yield Control(c1, c2)
 
         )
