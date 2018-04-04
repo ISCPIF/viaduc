@@ -353,24 +353,23 @@ object Client {
 
 
 
-    val div1 = div("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) " +
-      "in the parc, T represents the number of tourists in the parc", padding := 10)
-
-    val theTabs = tabs.
-      add("About the equations", div1,
-        onclickExtra = () => println("Tab1 pressed"),
-        onAddedTab = (t: Tab) => println(s"${t.title} has been added"),
-        onRemovedTab = (t: Tab) => println(s"${t.title} has been removed")).
-      add("Scheme", img(src := "img/CAT_Schemat.png")).
-      add("Equation", img(src := "img/CAT_Equation.png"))
-
+    val T = div(p("l :")+div(box_l),p("g :")+div(box_g))
 
       /* HTML tags : */
+
+    val onoff = Var(false)
 
     dom.document.body.appendChild(
       div(width := "100%", height := "100%")(
         h1("Welcome to Viaduc: "),
-        theTabs.render(pills),
+        div(
+          buttonIcon("About the equations", btn_primary).expandOnclick(panel("C represents the fishermen's capital (boats, income...)," +
+            " A represents the number of Animals (turtles) \" +\n      \"in the parc, T represents the number of tourists in the parc")(width := 400))),
+        div(
+          buttonIcon("Scheme", btn_primary).expandOnclick(img(src := "img/CAT_Schemat.png")(width := 400))),
+        div(
+          buttonIcon("Equation", btn_primary).expandOnclick(img(src := "img/CAT_Equation.png")(width := 400))),
+
 
         /*   img(src := "img/CAT_Schemat.png"),
 
@@ -379,11 +378,12 @@ object Client {
              onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
 
            img(src := "img/CAT_Equation.png"), */
-        h2("Set up the parameters:"),
+        h2("Step 1: Set up the parameters:"),
         p(
           "Here you can change the parameters:"
         ),
-
+        div(
+          buttonIcon("Equation's parameters :", btn_primary).expandOnclick(div(p("l : "),div(box_l).render))),
         p("l:"),
         div(box_l),
         p("g:"),
@@ -413,10 +413,12 @@ object Client {
         p("mt :"),
         div(box_mt),
         p(" "),
+
         div(addButton),
         h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
         div(plotDiv.render),
-        h2("Choose the controls: "),
+
+        h2("Step 2 :Choose the controls: "),
         div(p(check_Eps,
           "I want to clean the beaches from",
           box_MaxEps,
@@ -430,7 +432,7 @@ object Client {
           box_MinZeta,
           "% of the parc")),
 
-        h2("Choose the limits on C, A and T: "),
+        h2("Step 3 : Choose the limits on C, A and T: "),
         p("Maximum on fisherman's capital :"),
         div(box_MaxC),
         p("Minimum on fisherman's capital :"),
@@ -443,8 +445,9 @@ object Client {
         div(box_MaxT),
         p("Minimum on the number of tourists :"),
         div(box_MinT),
+        h2("Step 4 Compute your viability kernel: "),
         div(addButtonCalc),
-        div(addButtonVideOrNot),
+      //  div(addButtonVideOrNot),
         p(
           Rx {
             kernelStatus() match {
