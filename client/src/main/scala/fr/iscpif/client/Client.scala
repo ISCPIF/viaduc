@@ -8,7 +8,7 @@ import org.scalajs.dom
 
 import scala.Array.concat
 import scala.concurrent.Future
-import scala.scalajs.js.annotation.JSExportTopLevel
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, ScalaJSDefined}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
 import com.definitelyscala.plotlyjs.PlotData
@@ -16,35 +16,40 @@ import org.scalajs.dom.html
 
 import scala.scalajs
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom.all._
+
 import scala.util.matching._
 import scala.io.Source
-
 import scala.scalajs.js.JSConverters._
 import com.definitelyscala.plotlyjs._
 import com.definitelyscala.plotlyjs.all._
 import com.definitelyscala.plotlyjs.PlotlyImplicits._
 import com.definitelyscala.plotlyjs.plotlyConts._
-import org.querki.jsext.JSOptionBuilder
+import org.querki.jsext.{JSOptionBuilder, noOpts}
 import org.scalajs.dom
 import org.scalajs.dom.raw._
 import autowire._
-import shared.Api
-import shared.Data._
 import scaladget.tools.JsRxTags._
 
 import Array._
 import scala.util.Try
 import scala.concurrent.ExecutionContext.Implicits.global
 import boopickle.Default._
+import com.definitelyscala.plotlyjs.Shape
+import com.definitelyscala.plotlyjs
+import com.definitelyscala.plotlyjs.Plotly.Datum
+//import com.fasterxml.jackson.annotation.JsonFormat.Shape
 
 import scala.util.{Failure, Success}
 import rx._
-
 import scaladget.bootstrapnative.bsn._
+import scaladget.bootstrapnative.Popup._
 
 
+//import shared.Api
+//import shared.Data._
+import shared.Api
+import shared.Data._
 
 object Client {
 
@@ -353,18 +358,54 @@ object Client {
 
 
 
-    val T = div(p("l :")+div(box_l),p("g :")+div(box_g))
+    val onoff = Var(false)
+
+    // affichage du noyau :
+
+    val KernelDiv = div.render
+
+    val rect = js.Dynamic.literal(
+      `type` = "rect",
+      x0 = 3,
+      y0 = 1,
+      x1 = 6,
+      y1 = 2,
+      fillcolor = "rgba(128, 0, 128, 0.7)"
+
+    ).asInstanceOf[Shape]
+
+    val layoutKernel = Layout
+      .title("My Kernel")
+      .showlegend(true)
+      .yaxis(plotlyaxis.title("Tourists"))
+      .xaxis(plotlyaxis.title("Turtles"))
+      .shapes(scalajs.js.Array(rect))
+
+    val dataKernel = data
+      .x((Array(1.5, 4.5)).toJSArray)
+      .y((Array(0.75, 0.75)).toJSArray)
+      .text("Kernel")
+
+    val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
+
 
       /* HTML tags : */
 
-    val onoff = Var(false)
+
 
     dom.document.body.appendChild(
-      div(width := "100%", height := "100%")(
+      div(width := "80%", height := "80%")(
         h1("Welcome to Viaduc: "),
+        h2("What is Viaduc ? "),
+        div(panel("Viaduc is a Viability Expert Agent based on a viability analysis (Wei et al., 2012). It is based on the Viability theory described by Aubin (1992)"
+          +" During a game session, the player is able to choose constraints, controls (i.e how to control the system in order to keep it within the constraints)"+
+          " and will be able to change the value of some parameter if he or she doesn’t agree with the dynamic."+
+        "capacity of the viability expert agent to help a player to analyze one viability kernel corresponding to a set of constraints that he himself decided, but also to compare with alternative kernels/constraints explored by himself or proposed by other players during the negotiation."
+          + " Therefore, this provides the players with a basic way to quantify and analyze the degree of feasibility and viability of proposals. Instead of just comparing the constraint sets, the viability expert compares the viability kernels, which are based on the link between the dynamics and the constraints.\n."
+          + " Small changes in constraint sets can have a broad range of impacts depending on the dynamics.")(width := 800)),
         div(
           buttonIcon("About the equations", btn_primary).expandOnclick(panel("C represents the fishermen's capital (boats, income...)," +
-            " A represents the number of Animals (turtles) \" +\n      \"in the parc, T represents the number of tourists in the parc")(width := 400))),
+            " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
         div(
           buttonIcon("Scheme", btn_primary).expandOnclick(img(src := "img/CAT_Schemat.png")(width := 400))),
         div(
@@ -383,7 +424,7 @@ object Client {
           "Here you can change the parameters:"
         ),
         div(
-          buttonIcon("Equation's parameters :", btn_primary).expandOnclick(div(p("l : "),div(box_l).render))),
+          buttonIcon("Equation's parameters :", btn_primary).expandOnclick(div(p("l : "),div(box_l)))),
         p("l:"),
         div(box_l),
         p("g:"),
@@ -433,20 +474,21 @@ object Client {
           "% of the parc")),
 
         h2("Step 3 : Choose the limits on C, A and T: "),
-        p("Maximum on fisherman's capital :"),
-        div(box_MaxC),
-        p("Minimum on fisherman's capital :"),
-        div(box_MinC),
-        p("Maximum on the number of animals :"),
-        div(box_MaxA),
-        p("Minimum on the number of animals :"),
-        div(box_MinA),
-        p("Maximum on the number of tourists :"),
-        div(box_MaxT),
-        p("Minimum on the number of tourists :"),
-        div(box_MinT),
+        div(p("Maximum on fisherman's capital :",
+          box_MaxC,
+          "   Minimum on fisherman's capital :",
+          box_MinC)),
+        div(p("Maximum on the number of animals :",
+          box_MaxA,
+          "   Minimum on the number of animals :",
+          box_MinA)),
+        div(p("Maximum on the number of tourists :",
+          box_MaxT,
+          "   Minimum on the number of tourists :",
+          box_MinT)),
         h2("Step 4 Compute your viability kernel: "),
         div(addButtonCalc),
+        div(KernelDiv.render),
       //  div(addButtonVideOrNot),
         p(
           Rx {
