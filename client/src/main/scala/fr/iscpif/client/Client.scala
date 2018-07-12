@@ -3,6 +3,7 @@ package fr.iscpif.client
 import java.nio.ByteBuffer
 
 import CAT_RK4._
+import File2shapes._
 import boopickle.Default._
 import org.scalajs.dom
 
@@ -13,13 +14,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
 import com.definitelyscala.plotlyjs.PlotData
 import org.scalajs.dom.html
+import org.scalajs.dom.document
 
 import scala.scalajs
 import scala.scalajs.js
 import scalatags.JsDom.all._
 
 import scala.util.matching._
-import scala.io.Source
 import scala.scalajs.js.JSConverters._
 import com.definitelyscala.plotlyjs._
 import com.definitelyscala.plotlyjs.all._
@@ -38,6 +39,7 @@ import boopickle.Default._
 import com.definitelyscala.plotlyjs.Shape
 import com.definitelyscala.plotlyjs
 import com.definitelyscala.plotlyjs.Plotly.Datum
+import com.sun.scenario.Settings
 //import com.fasterxml.jackson.annotation.JsonFormat.Shape
 
 import scala.util.{Failure, Success}
@@ -355,6 +357,21 @@ object Client {
         }
       }
     )
+    lazy val showKernelbutton = button("Show kernel from file",
+      onclick := { () =>
+        val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
+        println(file.name)
+        var reader = new FileReader()
+        reader.onload = (_: UIEvent) => {
+          val text = s"${reader.result}"
+          val content = document.getElementById("content")
+          println(text)
+          content.textContent = text
+        }
+        reader.readAsText(file)
+
+
+      })
 
 
 
@@ -364,37 +381,50 @@ object Client {
 
     val KernelDiv = div.render
 
+    //"/Users/laetitiazaleski/Desktop"
+    //dom.File
+
+
+    //val myKernel = File2shapes.FileToshapes()
+
+
     val rect = js.Dynamic.literal(
       `type` = "rect",
       x0 = 3,
       y0 = 1,
       x1 = 6,
       y1 = 2,
-      fillcolor = "rgba(128, 0, 128, 0.7)"
+      fillcolor = "rgba(128, 0, 128, 0.7)").asInstanceOf[Shape]
 
-    ).asInstanceOf[Shape]
-
-    val layoutKernel = Layout
+  val layoutKernel = Layout
       .title("My Kernel")
       .showlegend(true)
       .yaxis(plotlyaxis.title("Tourists"))
       .xaxis(plotlyaxis.title("Turtles"))
       .shapes(scalajs.js.Array(rect))
 
-    val dataKernel = data
-      .x((Array(1.5, 4.5)).toJSArray)
-      .y((Array(0.75, 0.75)).toJSArray)
-      .text("Kernel")
+  /*      val layoutKernel = Layout
+          .title("My Kernel")
+          .showlegend(true)
+          .yaxis(plotlyaxis.title("Tourists"))
+          .xaxis(plotlyaxis.title("Turtles"))
+          .shapes(myKernel) */
 
-    val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
+        val dataKernel = data
+          .x((Array(1.5, 4.5)).toJSArray)
+          .y((Array(0.75, 0.75)).toJSArray)
+          .text("Kernel")
+
+        val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
 
 
-      /* HTML tags : */
+    /* HTML tags : */
 
 
 
     dom.document.body.appendChild(
       div(width := "80%", height := "80%")(
+
         h1("Welcome to Viaduc: "),
         h2("What is Viaduc ? "),
         div(panel("Viaduc is a Viability Expert Agent based on a viability analysis (Wei et al., 2012). It is based on the Viability theory described by Aubin (1992)"
@@ -488,6 +518,9 @@ object Client {
           box_MinT)),
         h2("Step 4 Compute your viability kernel: "),
         div(addButtonCalc),
+        div(input(`type` := "file", id := "file_input").render),
+        div(showKernelbutton),
+        pre(id := "content"),
         div(KernelDiv.render),
       //  div(addButtonVideOrNot),
         p(
@@ -499,6 +532,7 @@ object Client {
                 ks.kernelResult match {
                   case None => "Weird case ..."
                   case Some(kr: KernelResult) =>
+
                     // val kr = kernelStatus.now
                     s"${ks.message} :: " + {
                       if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
