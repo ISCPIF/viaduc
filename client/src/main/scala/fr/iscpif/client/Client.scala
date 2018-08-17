@@ -357,6 +357,13 @@ object Client {
         }
       }
     )
+
+    val onoff = Var(false)
+
+    // affichage du noyau :
+
+    val KernelDiv = div.render
+
     lazy val showKernelbutton = button("Show kernel from file",
       onclick := { () =>
         val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
@@ -365,8 +372,27 @@ object Client {
         reader.onload = (_: UIEvent) => {
           val text = s"${reader.result}"
           val content = document.getElementById("content")
-          println(text)
-          content.textContent = text
+
+          val layoutKernel = Layout
+            .title("My Kernel")
+            .showlegend(true)
+            .yaxis(plotlyaxis.title("Tourists"))
+            .xaxis(plotlyaxis.title("Turtles"))
+            .shapes(File2shapes.FileToshapes(text))
+
+          /*      val layoutKernel = Layout
+                  .title("My Kernel")
+                  .showlegend(true)
+                  .yaxis(plotlyaxis.title("Tourists"))
+                  .xaxis(plotlyaxis.title("Turtles"))
+                  .shapes(myKernel) */
+
+          val dataKernel = data
+            .x((Array(1.5, 4.5)).toJSArray)
+            .y((Array(0.75, 0.75)).toJSArray)
+            .text("Kernel")
+
+          val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
         }
         reader.readAsText(file)
 
@@ -375,11 +401,7 @@ object Client {
 
 
 
-    val onoff = Var(false)
 
-    // affichage du noyau :
-
-    val KernelDiv = div.render
 
     //"/Users/laetitiazaleski/Desktop"
     //dom.File
@@ -387,7 +409,7 @@ object Client {
 
     //val myKernel = File2shapes.FileToshapes()
 
-
+/*
     val rect = js.Dynamic.literal(
       `type` = "rect",
       x0 = 3,
@@ -416,7 +438,7 @@ object Client {
           .text("Kernel")
 
         val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
-
+*/
 
     /* HTML tags : */
 
@@ -518,11 +540,6 @@ object Client {
           box_MinT)),
         h2("Step 4 Compute your viability kernel: "),
         div(addButtonCalc),
-        div(input(`type` := "file", id := "file_input").render),
-        div(showKernelbutton),
-        pre(id := "content"),
-        div(KernelDiv.render),
-      //  div(addButtonVideOrNot),
         p(
           Rx {
             kernelStatus() match {
@@ -541,7 +558,13 @@ object Client {
                 }
             }
           }
-        )
+        ),
+        div(input(`type` := "file", id := "file_input").render),
+        div(showKernelbutton),
+        pre(id := "content"),
+        div(KernelDiv.render)
+      //  div(addButtonVideOrNot),
+
       ).render
     )
   }
