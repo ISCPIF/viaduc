@@ -4,8 +4,8 @@ package fr.iscpif.app
 import viabilitree.model._
 
 case class Parc3D() {
-  var integrationStep = 0.01
-  var timeStep = 0.05
+  var integrationStep = 0.001 // 0.01
+  var timeStep = 0.01 //0.05
   var l = 0.01
   var g = 1.0
   var M = 5000

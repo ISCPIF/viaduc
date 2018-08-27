@@ -10,6 +10,7 @@ import scala.scalajs.js
 
 
 
+
 object File2shapes {
 
   def readTextFile(fileToRead: dom.File): Future[Either[DOMError, String]] = {
@@ -36,7 +37,7 @@ object File2shapes {
     }
 */
 
-  def FileToshapes(fileContent: String): js.Array[Shape] = {
+  def FileToshapes(fileContent: String, id: Int): js.Array[Shape] = {
 
     /*readTextFile(file).map {
       case Right(fileContent) => println(s"File content: $fileContent")
@@ -46,10 +47,14 @@ object File2shapes {
     var x_1 = 0.0
     var y_0 = 0.0
     var y_1 = 0.0
-    var z_0 = 0.0
-    var z_1 = 0.0
-    val color = "rgba(128, 0, 128, 0.7)"
 
+    var color = "rgba(128, 0, 128, 0.5)" // case Animaux Touristes
+    if (id == 2){
+       color = "rgba(205, 92, 92, 0.5)" // case Capital Animaux
+    }
+    if (id == 3){
+       color = "rgba(65, 209, 204, 0.5)" // case Capital Tourist
+    }
     var line = "0"
 
     var rect = scalajs.js.Dynamic.literal(
@@ -68,31 +73,33 @@ object File2shapes {
         val lines = fileContent.split("\n")
         for (lineString <- lines) {
           var line = lineString.split(" ")
-         /* z_0 = line{0}.toDouble - line{3}.toDouble
-          z_1 = line{0}.toDouble + line{4}.toDouble
-          y_0 = line{1}.toDouble - line{5}.toDouble
-          y_1 = line{1}.toDouble + line{6}.toDouble
-          x_0 = line{2}.toDouble - line{7}.toDouble
-          x_1 = line{2}.toDouble + line{8}.toDouble
-          
-          flag = flag + 1
-
-          if(flag > 500){
-            println(s"$lineString")
-            println(s"$x_0 , $x_1, $y_0 , $y_1, $z_0 , $z_1")
-
-            }
-        */
-
+          if (id == 1){ // case Animaux Touristes
+            y_0 = line{7}.toDouble;
+            x_0 = line{5}.toDouble;
+            y_1 = line{8}.toDouble;
+            x_1 = line{6}.toDouble;
+          }
+          if (id == 2){ // case Capital Animaux
+            y_0 = line{3}.toDouble;
+            x_0 = line{5}.toDouble;
+            y_1 = line{4}.toDouble;
+            x_1 = line{6}.toDouble;
+          }
+          if (id == 3){ // case Capital Tourist
+            y_0 = line{3}.toDouble;
+            x_0 = line{7}.toDouble;
+            y_1 = line{4}.toDouble;
+            x_1 = line{8}.toDouble;
+          }
         rect = scalajs.js.Dynamic.literal(
           `type` = "rect",
-          x0 = line{7}.toDouble,
-          y0 = line{5}.toDouble,
-          x1 = line{8}.toDouble,
-          y1 = line{6}.toDouble,
+          y0 = y_0,
+          x0 = x_0,
+          y1 = y_1,
+          x1 = x_1,
           fillcolor = color
         ).asInstanceOf[Shape]
-      shapes.push({rect}) //++=  ArrayBuffer(rect)
+      shapes.push({rect})
     }
 
     shapes

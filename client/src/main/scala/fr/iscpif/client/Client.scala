@@ -18,7 +18,7 @@ import org.scalajs.dom.document
 
 import scala.scalajs
 import scala.scalajs.js
-import scalatags.JsDom.all._
+import scalatags.JsDom.all.{div, _}
 
 import scala.util.matching._
 import scala.scalajs.js.JSConverters._
@@ -362,23 +362,39 @@ object Client {
 
     // affichage du noyau :
 
-    val KernelDiv = div.render
+    val KernelDiv1 = div.render
+    val KernelDiv2 = div.render
+    val KernelDiv3 = div.render
 
-    lazy val showKernelbutton = button("Show kernel from file",
+    lazy val showKernelbutton = button("Show Kernel from file",
       onclick := { () =>
         val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
-        println(file.name)
+
         var reader = new FileReader()
         reader.onload = (_: UIEvent) => {
           val text = s"${reader.result}"
           val content = document.getElementById("content")
 
-          val layoutKernel = Layout
+          val layoutKernel1 = Layout //  1 : case Animaux Touristes
             .title("My Kernel")
             .showlegend(true)
             .yaxis(plotlyaxis.title("Tourists"))
             .xaxis(plotlyaxis.title("Turtles"))
-            .shapes(File2shapes.FileToshapes(text))
+            .shapes(File2shapes.FileToshapes(text,1))
+
+          val layoutKernel2 = Layout //  2 : case Capital Animaux
+            .title("My Kernel")
+            .showlegend(true)
+            .yaxis(plotlyaxis.title("Capital"))
+            .xaxis(plotlyaxis.title("Turtles"))
+            .shapes(File2shapes.FileToshapes(text,2))
+
+          val layoutKernel3 = Layout //  3 : case Capital Animaux
+            .title("My Kernel")
+            .showlegend(true)
+            .yaxis(plotlyaxis.title("Capital"))
+            .xaxis(plotlyaxis.title("Tourists"))
+            .shapes(File2shapes.FileToshapes(text,3))
 
           /*      val layoutKernel = Layout
                   .title("My Kernel")
@@ -392,7 +408,9 @@ object Client {
             .y((Array(0.75, 0.75)).toJSArray)
             .text("Kernel")
 
-          val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
+          val plotshapes1 = Plotly.newPlot(KernelDiv1, js.Array(dataKernel), layoutKernel1)
+          val plotshapes2 = Plotly.newPlot(KernelDiv2, js.Array(dataKernel), layoutKernel2)
+          val plotshapes3 = Plotly.newPlot(KernelDiv3, js.Array(dataKernel), layoutKernel3)
         }
         reader.readAsText(file)
 
@@ -562,7 +580,9 @@ object Client {
         div(input(`type` := "file", id := "file_input").render),
         div(showKernelbutton),
         pre(id := "content"),
-        div(KernelDiv.render)
+        div(KernelDiv1.render),
+        div(KernelDiv2.render),
+        div(KernelDiv3.render)
       //  div(addButtonVideOrNot),
 
       ).render
