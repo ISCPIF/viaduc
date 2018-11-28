@@ -2,8 +2,8 @@ package fr.iscpif.client
 
 import java.nio.ByteBuffer
 
-import CAT_RK4._
-import File2shapes._
+import fr.iscpif.client.CAT_RK4._
+import fr.iscpif.client.File2shapes._
 import boopickle.Default._
 import org.scalajs.dom
 
@@ -45,13 +45,14 @@ import com.sun.scenario.Settings
 import scala.util.{Failure, Success}
 import rx._
 import scaladget.bootstrapnative.bsn._
-import scaladget.bootstrapnative.Popup._
 
 
 //import shared.Api
 //import shared.Data._
 import shared.Api
 import shared.Data._
+
+
 
 object Client {
 
@@ -159,12 +160,12 @@ object Client {
 
     val check_Eps = input(
       `type` := "checkbox",
-      value := "checkbox"
+      value := "Eps"
     ).render
 
     val check_zeta = input(
       `type` := "checkbox",
-      value := "cmd"
+      value := "Zeta"
     ).render
 
     val box_MaxEps = input(
@@ -289,12 +290,37 @@ object Client {
       layout)
 
 
-    // bouton pour rafraichir le graphe :
-
-    val addButton = button("Plot").render
+    /*************** Bouton  Crise ***************/
 
 
-    addButton.onclick = (e: dom.Event) => {
+    val check_crise = input(
+      `type` := "checkbox",
+      value := "1"
+    ).render
+
+
+    /* val clicked = Var("None")
+
+     val buttonStyle: ModifierSeq = Seq(
+       marginRight := 5,
+       marginTop := 5
+     )
+
+     lazy val theRadios: SelectableButtons = radios()(
+       selectableButton("No Crisis", onclick = radioAction),
+       selectableButton("Oil Spill", true, onclick = radioAction)
+     )
+      def radioAction = () => active() = theRadios.active
+     */
+
+    /********** bouton pour rafraichir le graphe : ************/
+
+    val buttonPlot = button("Plot").render
+
+
+    buttonPlot.onclick = (e: dom.Event) => {
+      println ("********************* PLOT ***************")
+      println (check_crise.value)
       var Cval = Array(Cinit)
       var Aval = Array(Ainit)
       var Tval = Array(Tinit)
@@ -340,6 +366,12 @@ object Client {
     }
 
 
+
+
+
+
+    /***************** Noyau *********************/
+
     val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
 
     val addButtonVideOrNot = button("Show Kernel").render
@@ -347,6 +379,20 @@ object Client {
     lazy val addButtonCalc = button("Compute Kernel",
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
+
+        Console.print ("********************* Eps ***************")
+
+        if (check_Eps.checked == false){
+          box_MaxEps.value = "0"
+          box_MinEps.value = "0"
+          println ("********************* Eps ***************")
+        }
+        if (check_zeta.checked == false){
+            box_MaxZeta.value = "0"
+            box_MinZeta.value = "0"
+            println ("********************* Zeta ***************")
+          }
+
         Post[Api].CalcKernel(KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
           box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
@@ -354,19 +400,26 @@ object Client {
           box_mp.value.toDouble, box_mt.value.toDouble, box_MaxEps.value.toDouble,box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
           box_MinZeta.value.toDouble)).call().foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
-        }
+
       }
+        println ("********************* PARAM ***************")
+        println(box_MaxEps.value)
+        println(box_MaxZeta.value)
+    }
+
+
     )
 
     val onoff = Var(false)
 
     // affichage du noyau :
 
+    val KernelDiv0 = div.render
     val KernelDiv1 = div.render
     val KernelDiv2 = div.render
     val KernelDiv3 = div.render
 
-    lazy val showKernelbutton = button("Show Kernel from file",
+    lazy val showKernelbutton = button("Show 3D Kernel from file",
       onclick := { () =>
         val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
 
@@ -380,21 +433,21 @@ object Client {
             .showlegend(true)
             .yaxis(plotlyaxis.title("Tourists"))
             .xaxis(plotlyaxis.title("Turtles"))
-            .shapes(File2shapes.FileToshapes(text,1))
+            .shapes(File2shapes.FileToshapes(text, 1))
 
           val layoutKernel2 = Layout //  2 : case Capital Animaux
             .title("My Kernel")
             .showlegend(true)
             .yaxis(plotlyaxis.title("Capital"))
             .xaxis(plotlyaxis.title("Turtles"))
-            .shapes(File2shapes.FileToshapes(text,2))
+            .shapes(File2shapes.FileToshapes(text, 2))
 
           val layoutKernel3 = Layout //  3 : case Capital Animaux
             .title("My Kernel")
             .showlegend(true)
             .yaxis(plotlyaxis.title("Capital"))
             .xaxis(plotlyaxis.title("Tourists"))
-            .shapes(File2shapes.FileToshapes(text,3))
+            .shapes(File2shapes.FileToshapes(text, 3))
 
           /*      val layoutKernel = Layout
                   .title("My Kernel")
@@ -412,6 +465,40 @@ object Client {
           val plotshapes2 = Plotly.newPlot(KernelDiv2, js.Array(dataKernel), layoutKernel2)
           val plotshapes3 = Plotly.newPlot(KernelDiv3, js.Array(dataKernel), layoutKernel3)
         }
+        reader.readAsText(file)
+      })
+
+        lazy val show2DKernelbutton = button("Show 2D Kernel from file",
+          onclick := { () =>
+            val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
+
+            var reader = new FileReader()
+            reader.onload = (_: UIEvent) => {
+              val text = s"${reader.result}"
+              val content = document.getElementById("content")
+
+              val layoutKernel = Layout //  1 : case Animaux Touristes
+                .title("My Kernel")
+                .showlegend(true)
+                .yaxis(plotlyaxis.title("Tourists"))
+                .xaxis(plotlyaxis.title("Turtles"))
+                .shapes(File2shapes.FileToshapes(text, 0))
+
+              /*      val layoutKernel = Layout
+                      .title("My Kernel")
+                      .showlegend(true)
+                      .yaxis(plotlyaxis.title("Tourists"))
+                      .xaxis(plotlyaxis.title("Turtles"))
+                      .shapes(myKernel) */
+
+              val dataKernel = data
+                .x((Array(1.5, 4.5)).toJSArray)
+                .y((Array(0.75, 0.75)).toJSArray)
+                .text("Kernel")
+
+              val plotshapes = Plotly.newPlot(KernelDiv0, js.Array(dataKernel), layoutKernel)
+            }
+
         reader.readAsText(file)
 
 
@@ -461,24 +548,22 @@ object Client {
     /* HTML tags : */
 
 
-
     dom.document.body.appendChild(
       div(width := "80%", height := "80%")(
-
-        h1("Welcome to Viaduc: "),
-        h2("What is Viaduc ? "),
-        div(panel("Viaduc is a Viability Expert Agent based on a viability analysis (Wei et al., 2012). It is based on the Viability theory described by Aubin (1992)"
+        h1("  Welcome to Viaduc: "),
+        h2("  What is Viaduc ? "),
+        p(panel("Viaduc is a Viability Expert Agent based on a viability analysis (Wei et al., 2012). It is based on the Viability theory described by Aubin (1992)"
           +" During a game session, the player is able to choose constraints, controls (i.e how to control the system in order to keep it within the constraints)"+
           " and will be able to change the value of some parameter if he or she doesn’t agree with the dynamic."+
         "capacity of the viability expert agent to help a player to analyze one viability kernel corresponding to a set of constraints that he himself decided, but also to compare with alternative kernels/constraints explored by himself or proposed by other players during the negotiation."
           + " Therefore, this provides the players with a basic way to quantify and analyze the degree of feasibility and viability of proposals. Instead of just comparing the constraint sets, the viability expert compares the viability kernels, which are based on the link between the dynamics and the constraints.\n."
           + " Small changes in constraint sets can have a broad range of impacts depending on the dynamics.")(width := 800)),
-        div(
+        p(
           buttonIcon("About the equations", btn_primary).expandOnclick(panel("C represents the fishermen's capital (boats, income...)," +
             " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
-        div(
+        p(
           buttonIcon("Scheme", btn_primary).expandOnclick(img(src := "img/CAT_Schemat.png")(width := 400))),
-        div(
+        p(
           buttonIcon("Equation", btn_primary).expandOnclick(img(src := "img/CAT_Equation.png")(width := 400))),
 
 
@@ -489,12 +574,10 @@ object Client {
              onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
 
            img(src := "img/CAT_Equation.png"), */
-        h2("Step 1: Set up the parameters:"),
+        h2("  Step 1 : Set up the parameters :"),
         p(
-          "Here you can change the parameters:"
+          " Here you can change the parameters :"
         ),
-        div(
-          buttonIcon("Equation's parameters :", btn_primary).expandOnclick(div(p("l : "),div(box_l)))),
         p("l:"),
         div(box_l),
         p("g:"),
@@ -524,8 +607,10 @@ object Client {
         p("mt :"),
         div(box_mt),
         p(" "),
+        p(check_crise,"Add a crisis to the scenario (for example, an oil spill)"),
 
-        div(addButton),
+
+        div(buttonPlot),
         h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
         div(plotDiv.render),
 
@@ -569,7 +654,7 @@ object Client {
                   case Some(kr: KernelResult) =>
 
                     // val kr = kernelStatus.now
-                    s"${ks.message} :: " + {
+                    s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
                       if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
                       else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
                     }
@@ -579,7 +664,9 @@ object Client {
         ),
         div(input(`type` := "file", id := "file_input").render),
         div(showKernelbutton),
-        pre(id := "content"),
+        div(show2DKernelbutton),
+       // pre(id := "content"),
+        div(KernelDiv0.render),
         div(KernelDiv1.render),
         div(KernelDiv2.render),
         div(KernelDiv3.render)

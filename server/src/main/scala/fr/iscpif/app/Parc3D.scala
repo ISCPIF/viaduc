@@ -49,11 +49,11 @@ case class Parc3D() {
 
     def dynamic(state: Vector[Double], control: Vector[Double]) = {
       // A: state(0), T: state(1), E: state(2)
-      def CDot(state: Vector[Double], t: Double) = -del * state(0) + p * state(1) * mp + mt * state(2) - h
+      def CDot(state: Vector[Double], t: Double) =  -del * state(0) + p * state(1) * mp + mt * state(2)
 
-      def ADot(state: Vector[Double], t: Double) = state(1) * g * (1 - state(1) / (1 + M / (1 + eta * state(2) / (control(1) + 1)))) - control(0) * l * state(1) * state(2) - p * state(1)
+      def ADot(state: Vector[Double], t: Double) =  state(1) * g * (1 - state(1) / (1 + M / (1 + eta * state(2) / (control(1) + 1)))) - control(0) * l * state(1) * state(2) - p * state(1)
 
-      def TDot(state: Vector[Double], t: Double) = state(2) * (-c * state(2) / (state(2) + phi) + e * state(0) / (state(0) + phi2) - d) + a * control(0) * state(1)
+      def TDot(state: Vector[Double], t: Double) =  state(2) * (-c * state(2) / (state(2) + phi))  + a * control(0) * state(1)
 
 
       val dynamic = Dynamic(ADot, TDot, CDot)

@@ -1,5 +1,3 @@
-import java.io.File
-
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 
@@ -42,6 +40,9 @@ lazy val client = project.in(file("client")) settings(
     "org.json4s" %% "json4s-jackson" % json4sVersion,
     "fr.iscpif.scaladget" %%% "bootstrapnative" % scaladgetVersion,
     "fr.iscpif.scaladget" %%% "tools" % scaladgetVersion,
+    "fr.iscpif.scaladget" %%% "ace" % scaladgetVersion,
+    "fr.iscpif.scaladget" %%% "bootstrapslider" % scaladgetVersion,
+    "fr.iscpif.scaladget" %%% "lunr" % scaladgetVersion,
     "com.definitelyscala" %%% "scala-js-plotlyjs" % "1.1.4",
     "com.lihaoyi" %%% "sourcecode" % "0.1.2"
   )

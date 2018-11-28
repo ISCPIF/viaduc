@@ -13,7 +13,7 @@ object CAT_RK4 {
           eps: Double, phi: Double, d: Double, delta: Double,
           mp: Double, mt: Double, Cprev : Double, Aprev: Double, Tprev: Double): Double = {
 
-      -delta * Cprev + p* Aprev * mp + Tprev * mt - h_C
+      -delta * Cprev + p* Aprev * mp + Tprev * mt
     }
 
     def A(zeta: Double, l: Double, g: Double, M: Double, h: Double,
@@ -29,7 +29,7 @@ object CAT_RK4 {
           eps: Double, phi: Double, d: Double, delta: Double,
           mp: Double, mt: Double, Cprev : Double, Aprev: Double, Tprev: Double): Double = {
 
-      Tprev *( - c*Tprev/(Tprev+ phi) - d) + e*Cprev/(Cprev+ phi) - d + zeta*a*Aprev
+      Tprev *( - c*Tprev/(Tprev+ phi) - d) + zeta*a*Aprev
     }
 
     val h= 0.0000001

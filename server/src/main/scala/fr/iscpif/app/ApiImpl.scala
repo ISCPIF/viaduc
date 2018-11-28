@@ -1,14 +1,13 @@
 package fr.iscpif.app
 
 import better.files._
-
+import fr.iscpif.app.Parc2DViabilityKernel._
 import scalaz.Alpha.M
 import viabilitree.export._
 import viabilitree.viability._
 import viabilitree.viability.kernel._
 import viabilitree.viability.kernel.KernelComputation
 import shared.Data._
-
 import scala.io.Source
 
 
@@ -35,7 +34,7 @@ object ApiImpl extends shared.Api {
         parc.phi2 = parameters.phi2
         parc.d = parameters.d
         parc.del = parameters.del
-        parc.h = parameters.h
+        parc.h = 0.0
         parc.mp = parameters.mp
         parc.mt = parameters.mt
 
@@ -76,6 +75,8 @@ object ApiImpl extends shared.Api {
         //saveVTK3D(ak, Settings.tmpDirectory / s"resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
         val kernelFile = Utils.file(parameters)
         saveHyperRectangles(vk)(ak, kernelFile)
+        saveVTK3D(ak, Settings.defaultViaducDirectory / s"resparc_3D_D${vk.depth}_V_${c_min}_${c_max}_${a_min}_${a_max}_${t_min}_${t_max}_C_${eps_min}_${eps_max}_${zeta_min}_${zeta_max}.vtk")
+
 
         println(steps)
 

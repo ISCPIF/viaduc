@@ -73,6 +73,12 @@ object File2shapes {
         val lines = fileContent.split("\n")
         for (lineString <- lines) {
           var line = lineString.split(" ")
+          if (id == 0){ // case Animaux Touristes en 2D !
+            y_0 = line{4}.toDouble;
+            x_0 = line{2}.toDouble;
+            y_1 = line{5}.toDouble;
+            x_1 = line{3}.toDouble;
+          }
           if (id == 1){ // case Animaux Touristes
             y_0 = line{7}.toDouble;
             x_0 = line{5}.toDouble;
