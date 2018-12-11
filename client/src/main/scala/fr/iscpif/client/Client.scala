@@ -69,19 +69,10 @@ object Client {
 
     /* Definition des parametres */
 
-    val box_zeta = input(
-      `type` := "text",
-      value := "0.01"
-    ).render
-
-    box_zeta.onkeyup = (e: dom.Event) => println(box_zeta.value)
-
-
-    val output_zeta = box_zeta.value
 
     val box_l = input(
       `type` := "text",
-      value := "0.1"
+      value := "0.00052"
     ).render
 
     /*  val output_l = span.render
@@ -93,53 +84,55 @@ object Client {
 */
     val box_g = input(
       `type` := "text",
-      value := "2.0"
+      value := "0.37"
     ).render
 
     val box_M = input(
       `type` := "text",
-      value := "5000"
+      value := "36036"
     ).render
 
-    val box_h = input(
+  /*  val box_h = input(
       `type` := "text",
       value := "0.00001"
-    ).render
+    ).render */
 
-    val box_c = input(
+  /*  val box_c = input(
       `type` := "text",
       value := "0.01"
-    ).render
+    ).render */
 
     val box_p = input(
       `type` := "text",
-      value := "0.1"
+      value := "0.0004"
     ).render
 
     val box_a = input(
       `type` := "text",
-      value := "100.0"
+      value := "100000.0"
     ).render
 
     val box_e = input(
       `type` := "text",
-      value := "0.01"
+      value := "100"
     ).render
 
     val box_eta = input(
       `type` := "text",
-      value := "0.00005"
+      value := "0.0008"
     ).render
 
     val box_phi = input(
       `type` := "text",
-      value := "1.0"
+      value := "1833"
     ).render
 
-    val box_d = input(
+    val box_phi2 = input(
       `type` := "text",
-      value := "1.0"
+      value := "10000"
     ).render
+
+
 
     val box_delta = input(
       `type` := "text",
@@ -148,12 +141,17 @@ object Client {
 
     val box_mp = input(
       `type` := "text",
-      value := "15.0"
+      value := "14.0"
     ).render
 
     val box_mt = input(
       `type` := "text",
-      value := "0.2"
+      value := "25"
+    ).render
+
+    val box_alpha = input(
+      `type` := "text",
+      value := "0.5"
     ).render
 
     //  controles :
@@ -220,6 +218,23 @@ object Client {
       value := "1000"
     ).render
 
+  // box inutiles : à retirer
+
+    val box_h = input(
+      `type` := "text",
+      value := "0"
+    ).render
+
+    val box_c = input(
+      `type` := "text",
+      value := "1"
+    ).render
+
+    val box_d = input(
+      `type` := "text",
+      value := "1.0"
+    ).render
+
     /* Calcul de CAT RK4 */
 
     // controles et valeur init:
@@ -238,14 +253,14 @@ object Client {
     // calcul:
     for (t <- 1 to t_max) {
 
-      val Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+      val Catinit = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
         box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
 
-      Cval = concat(Cval, Array(Cat(0) / 10))
-      Aval = concat(Aval, Array(Cat(1)))
-      Tval = concat(Tval, Array(Cat(2)))
+      Cval = concat(Cval, Array(Catinit(0) / 10))
+      Aval = concat(Aval, Array(Catinit(1)))
+      Tval = concat(Tval, Array(Catinit(2)))
       time = concat(time, Array(t))
 
     }
@@ -294,8 +309,7 @@ object Client {
 
 
     val check_crise = input(
-      `type` := "checkbox",
-      value := "1"
+      `type` := "checkbox"
     ).render
 
 
@@ -312,6 +326,17 @@ object Client {
      )
       def radioAction = () => active() = theRadios.active
      */
+    /********** Bouton Show Constraints ****************/
+
+    val buttonShowConstraints = button("Show Constraints on above graph").render
+
+    /********** Bouton Try with valid set :  ****************/
+
+
+    val buttonTryThis = button("Try this !").render
+    val buttonTryThis2 = button("Try this !").render
+
+
 
     /********** bouton pour rafraichir le graphe : ************/
 
@@ -320,24 +345,40 @@ object Client {
 
     buttonPlot.onclick = (e: dom.Event) => {
       println ("********************* PLOT ***************")
-      println (check_crise.value)
+
       var Cval = Array(Cinit)
       var Aval = Array(Ainit)
       var Tval = Array(Tinit)
       var time = Array(0)
+
+      val coefAc = 100
+      val Tc= 100
+
+      var Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+        box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+        eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+        box_mt.value.toDouble, Cinit, Ainit, Tinit)
+
       // calcul:
       for (t <- 1 to t_max) {
 
-        val Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+        Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
           eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
           box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
 
-        Cval = concat(Cval, Array(Cat(0) / 10))
-        Aval = concat(Aval, Array(Cat(1)))
-        Tval = concat(Tval, Array(Cat(2)))
-        time = concat(time, Array(t))
+        if((t==Tc)&&(check_crise.checked)){
+          println("crisis")
+          Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+            box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+            eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+            box_mt.value.toDouble, Cval.last * 10, 0, Tval.last)
+        }
 
+          Cval = concat(Cval, Array(Cat(0) / 10))
+          Aval = concat(Aval, Array(Cat(1)))
+          Tval = concat(Tval, Array(Cat(2)))
+          time = concat(time, Array(t))
       }
 
       val data1 = data
@@ -363,6 +404,7 @@ object Client {
       val plot = Plotly.newPlot(plotDiv,
         js.Array(data1, data2, data3),
         layout)
+
     }
 
 
@@ -382,12 +424,12 @@ object Client {
 
         Console.print ("********************* Eps ***************")
 
-        if (check_Eps.checked == false){
+        if (!check_Eps.checked ){
           box_MaxEps.value = "0"
           box_MinEps.value = "0"
           println ("********************* Eps ***************")
         }
-        if (check_zeta.checked == false){
+        if (!check_zeta.checked){
             box_MaxZeta.value = "0"
             box_MinZeta.value = "0"
             println ("********************* Zeta ***************")
@@ -578,39 +620,71 @@ object Client {
         p(
           " Here you can change the parameters :"
         ),
-        p("l:"),
+        p("l: is the depreciation of the fishing infrastructures, from [1]"),
         div(box_l),
-        p("g:"),
+        p("g: is the growth rate of the turtle population, from [2]"),
         div(box_g),
-        p("M:"),
+        p("M: is the maximum capacity of the environment, from [3]"),
         div(box_M),
-        p("h:"),
+      /*  p("h:"),
         div(box_h),
         p("c:"),
-        div(box_c),
-        p("p:"),
+        div(box_c), */
+        p("p: is the deaths caused by traditionnal fishing, from [4]"),
         div(box_p),
-        p("a:"),
+        p("a: is the attractiveness associated with high number of turtles"),
         div(box_a),
-        p("e:"),
+        p("e: is the attractiveness associated with high quality of fishermen’s infrastructures"),
         div(box_e),
-        p("eta:"),
+        p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
         div(box_eta),
-        p("phi:"),
+        p("phi: is the half saturation constant, namely the number of turtles at which tourist satisfaction is half maximum"),
         div(box_phi),
-        p("d:"),
-        div(box_d),
-        p("delta:"),
+       /* p("d:"),
+        div(box_d),*/
+        p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
         div(box_delta),
-        p("mp:"),
+        p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
         div(box_mp),
-        p("mt :"),
+        p("mt : is the price paid by each tourists that goes to the fisherman's infrastrures, from [8]"),
         div(box_mt),
+
+        p(
+          buttonIcon("References for the parameters", btn_primary).expandOnclick(panel(
+            "[1] Christina A.D. Semeniuk, Wolfgang Haider, and Kristina. Cooper, Andrew D. Rothley." +
+            " A linked model of animal ecology and human behavior for the management of wildlife tourism. Ecological Modelling, 2010.\n" +
+
+            "[2] JOHN R. HENDRICKSON. The green sea turtle, chelonia mydas (linn.) in malaya and sarawak." +
+            " Proceedings of the Zoological Society of London, 130(4):455–535. \n"+
+
+            "[3] Brendan Godley, Annette C Broderick, and Graeme. Hays. Nesting of green turtles (chelonia mydas) at ascension island, south atlantic." +
+            " biological conservation. Biological conservation, 97(22):151–158, februay 2001.\n"+
+
+            "[4] Bugonia Leandro, do Valle (UFRJ) Rogerio, de Aragao Bastos, and Maria Virgınia Petryb. Marine debris and human impacts on sea turtles " +
+            "in southern brazil. Marine Pollution Bulletin, Volume 42, Issue 12, pages 1330–1334, December 2001. \n"+
+
+            " [5] LARS BEJDER, AMY SAMUELS, HAL WHITEHEAD, NICK GALES, JANET MANN, RICHARD CONNOR, MIKE HEITHAUS, JANA WATSON-CAPPS, CINDY FLAHERTY, " +
+            "and MICHAEL KRÜTZEN. De- cline in relative abundance of bottlenose dolphins exposed to long-term disturbance. Conservation Biology, 20(6):1791–1798.\n"+
+
+            " [6] Lee Bun, Song. Measurement of capital depreciation within the japanese fishing fleet. The Review of Economics and Statistics," +
+            " Vol. 60, No. 2, pages 225–237, Apr. 1978. \n"+
+
+
+            " [7] Fabricio Molica de Mendonca (UFSJ), Lıgia Krausea, and Ri- cardo Coutinho (UFF). A cadeia produtiva da pesca artesanal em arraial do cabo:" +
+            " Analise e propostas de melhoria. ENCONTRO NACIONAL DE ENGENHARIA DE PRODUCAO Maturidade e desafios da Engenharia de Producao: competitividade das" +
+            " empresas, condicoes de trabalho, meio ambiente, pages 1330–1334, October 2010.\n"+
+
+            " [8] Valeria G. da Vinha (UFRJ), Peter May (CPDA/UFRRJ), and Liandra Peres Caldasso (CPDA/UFRRJ). Sustentabilidade da reserva " +
+            "extrativista marinha de arraial do cabo, rj: tecnicas de pesquisa e resultados. 2008.\n"
+
+              )(width := 800))),
+
         p(" "),
         p(check_crise,"Add a crisis to the scenario (for example, an oil spill)"),
 
 
         div(buttonPlot),
+
         h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
         div(plotDiv.render),
 
@@ -641,6 +715,7 @@ object Client {
           box_MaxT,
           "   Minimum on the number of tourists :",
           box_MinT)),
+        div(buttonShowConstraints),
         h2("Step 4 Compute your viability kernel: "),
         div(addButtonCalc),
         p(
@@ -663,6 +738,12 @@ object Client {
           }
         ),
         div(input(`type` := "file", id := "file_input").render),
+        div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
+        div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
+        div(buttonTryThis),
+        div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
+        div(buttonTryThis2),
+
         div(showKernelbutton),
         div(show2DKernelbutton),
        // pre(id := "content"),
