@@ -39,7 +39,6 @@ import boopickle.Default._
 import com.definitelyscala.plotlyjs.Shape
 import com.definitelyscala.plotlyjs
 import com.definitelyscala.plotlyjs.Plotly.Datum
-import com.sun.scenario.Settings
 //import com.fasterxml.jackson.annotation.JsonFormat.Shape
 
 import scala.util.{Failure, Success}
