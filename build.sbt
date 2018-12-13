@@ -11,8 +11,8 @@ val json4sVersion = "3.5.2"
 val scalatagsVersion = "0.6.7"
 val autowireVersion = "0.2.6"
 val boopickleVersion = "1.2.6"
-val rxVersion = "0.3.2"
-val scaladgetVersion = "1.0.1"
+val rxVersion = "0.4.0"
+val scaladgetVersion = "1.2.0"
 val scalajsDomVersion = "0.9.3"
 val betterFilesVersion = "3.2.0"
 val Resolvers = Seq(Resolver.sonatypeRepo("snapshots"),
@@ -40,10 +40,8 @@ lazy val client = project.in(file("client")) settings(
     "org.json4s" %% "json4s-jackson" % json4sVersion,
     "fr.iscpif.scaladget" %%% "bootstrapnative" % scaladgetVersion,
     "fr.iscpif.scaladget" %%% "tools" % scaladgetVersion,
-    "fr.iscpif.scaladget" %%% "ace" % scaladgetVersion,
     "fr.iscpif.scaladget" %%% "bootstrapslider" % scaladgetVersion,
-    "fr.iscpif.scaladget" %%% "lunr" % scaladgetVersion,
-    "com.definitelyscala" %%% "scala-js-plotlyjs" % "1.1.4",
+    "com.definitelyscala" %%% "scala-js-plotlyjs" % "1.1.8",
     "com.lihaoyi" %%% "sourcecode" % "0.1.2"
   )
 ) dependsOn (shared) enablePlugins (ExecNpmPlugin)
@@ -79,11 +77,12 @@ lazy val bootstrap = project.in(file("target/bootstrap")) settings(
 
     val demoTarget = (target in server in Compile).value
     val demoResource = (resourceDirectory in client in Compile).value
-    val jsTarget = demoTarget / "webapp/js"
+    val webappTarget = demoTarget / "webapp"
     val demoJS = (fullOptJS in client in Compile).value
 
-    IO.copyFile(demoJS.data, jsTarget / "viaduc.js")
-    IO.copyFile(dependencyFile.value, jsTarget / "deps.js")
-    IO.copyDirectory(demoResource , demoTarget )
+    IO.copyFile(demoJS.data, webappTarget / "js/viaduc.js")
+    IO.copyFile(dependencyFile.value, webappTarget / "js/deps.js")
+    IO.copyDirectory(cssFile.value, webappTarget / "css/")
+    IO.copyDirectory(demoResource, demoTarget)
   }
 ) dependsOn(client, server) enablePlugins (ExecNpmPlugin)
