@@ -16,7 +16,8 @@ val scaladgetVersion = "1.2.0"
 val scalajsDomVersion = "0.9.3"
 val betterFilesVersion = "3.2.0"
 val Resolvers = Seq(Resolver.sonatypeRepo("snapshots"),
-  Resolver.sonatypeRepo("releases"),
+    Resolver.sonatypeRepo("releases"),
+    Resolver.bintrayRepo("definitelyscala", "maven"),
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
