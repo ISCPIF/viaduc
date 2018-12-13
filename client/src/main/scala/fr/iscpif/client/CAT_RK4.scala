@@ -15,12 +15,12 @@ object CAT_RK4 {
           eps: Double, phi: Double, d: Double, delta: Double,
           mp: Double, mt: Double, Cprev : Double, Aprev: Double, Tprev: Double): Double = {
 
-      if((Aprev == 0.0)&&crisis){
+     /* if((Aprev == 0.0)&&crisis){
         println(-delta * Cprev)
         println(p* Aprev * mp)
         println(Tprev * mt)
         println(-delta * Cprev + p* Aprev * mp + Tprev * mt)
-      }
+      }*/
 
       -delta * Cprev + p* Aprev * mp + Tprev * mt
 
@@ -41,16 +41,16 @@ object CAT_RK4 {
           eps: Double, phi: Double, d: Double, delta: Double,
           mp: Double, mt: Double, Cprev : Double, Aprev: Double, Tprev: Double): Double = {
 
-      if((Aprev == 0.0)&&crisis){
+   /*   if((Aprev == 0.0)&&crisis){
         println(Tprev *( - c*Tprev/(Tprev + phi) - d) + zeta*a*Aprev)
 
         crisis = false
-      }
+      }*/
 
       Tprev *( - c*Tprev/(Tprev+ phi) - d) + zeta*a*Aprev
     }
 
-    val h= 0.0000001
+    val h= 0.0001
 
     val k1_C = C(zeta, l, g , M , h_C , c , p , a , e , eta , eps
       , phi , d , delta , mp , mt , Cprev  , Aprev , Tprev )
@@ -102,11 +102,11 @@ object CAT_RK4 {
 
     val Tnew = Tprev + h/6 *(k1_T + 2*k2_T + 2*k3_T + k4_T)
 
-    if((Anew == 0)&&crisis){
+    /*if((Anew == 0)&&crisis){
       println(Cnew)
       println(Tnew)
       crisis = false
-    }
+    }*/
 
     Array(Cnew, Anew, Tnew)
 

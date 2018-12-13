@@ -217,6 +217,25 @@ object Client {
       value := "1000"
     ).render
 
+
+    // box conditions initiales :
+
+
+    val box_Cinit = input(
+      `type` := "text",
+      value := "10000.0"
+    ).render
+
+    val box_Ainit = input(
+      `type` := "text",
+      value := "5000.0"
+    ).render
+
+    val box_Tinit = input(
+      `type` := "text",
+      value := "5000.0"
+    ).render
+
   // box inutiles : à retirer
 
     val box_h = input(
@@ -238,12 +257,12 @@ object Client {
 
     // controles et valeur init:
 
-    val eps = 100.0
-    val zeta = 0.1
-    val Cinit = 10000.0
-    val Ainit = 5000.0
-    val Tinit = 5000.0
-    val t_max = 500
+    var eps = 100.0
+    var zeta = 0.1
+    var Cinit = box_Cinit.value.toDouble
+    var Ainit = box_Ainit.value.toDouble
+    var Tinit = box_Tinit.value.toDouble
+    var t_max = 500
 
     var Cval = Array(Cinit / 10)
     var Aval = Array(Ainit)
@@ -345,13 +364,21 @@ object Client {
     buttonPlot.onclick = (e: dom.Event) => {
       println ("********************* PLOT ***************")
 
+      val eps = 100.0
+      val zeta = 0.1
+      val t_max = 10000
+
+      var Cinit = box_Cinit.value.toDouble
+      var Ainit = box_Ainit.value.toDouble
+      var Tinit = box_Tinit.value.toDouble
+
       var Cval = Array(Cinit)
       var Aval = Array(Ainit)
       var Tval = Array(Tinit)
       var time = Array(0)
 
-      val coefAc = 100
-      val Tc= 100
+      val coefAc = 100 // coeficient Animaux crise
+      val Tc= 1000 // temps t crise
 
       var Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
@@ -361,25 +388,103 @@ object Client {
       // calcul:
       for (t <- 1 to t_max) {
 
+
         Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
           box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
           eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
           box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
 
-        if((t==Tc)&&(check_crise.checked)){
+        if((t==Tc)&&(check_crise.checked)) {
           println("crisis")
-          Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+          Cval = concat(Cval, Array(Cat(0) / coefAc))
+          Aval = concat(Aval, Array(Cat(1)))
+          Tval = concat(Tval, Array(Cat(2)))
+          time = concat(time, Array(t))
+
+          /* Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
             box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
             eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-            box_mt.value.toDouble, Cval.last * 10, 0, Tval.last)
-        }
+            box_mt.value.toDouble, Cval.last * 10, Aval.last / coefAc, Tval.last) */
+
+        }else{
 
           Cval = concat(Cval, Array(Cat(0) / 10))
           Aval = concat(Aval, Array(Cat(1)))
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
-      }
 
+        }
+
+      }
+      /********** Limites sur C, A, T : ***********/
+      var Cmax = Array(box_MaxC.value.toDouble)
+      println(Cmax.length)
+      Cmax = Cmax.padTo(t_max, box_MaxC.value.toDouble)
+
+
+      var Cmin = Array(box_MaxC.value.toDouble)
+      println(Cmin.length)
+      Cmin = Cmin.padTo(t_max, box_MinC.value.toDouble)
+
+
+      var Amax = Array(box_MaxC.value.toDouble)
+      println(Amax.length)
+      Amax = Amax.padTo(t_max, box_MaxA.value.toDouble)
+
+
+      var Amin = Array(box_MaxC.value.toDouble)
+      println(Amin.length)
+      Amin = Amin.padTo(t_max, box_MinA.value.toDouble)
+
+
+      var Tmax = Array(box_MaxC.value.toDouble)
+      println(Tmax.length)
+      Tmax = Tmax.padTo(t_max, box_MaxT.value.toDouble)
+
+
+      var Tmin = Array(box_MaxC.value.toDouble)
+      println(Tmin.length)
+      Tmin = Tmin.padTo(t_max, box_MinT.value.toDouble)
+
+
+      /********** Plot limites sur C, A, T : ***********/
+      val dataCmax = data
+        .x(time.toJSArray)
+        .y(Cmax.toJSArray)
+        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(249, 149, 128)))
+        .name("Cmax")
+
+      val dataCmin = data
+        .x(time.toJSArray)
+        .y(Cmin.toJSArray)
+        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(249, 149, 128)))
+        .name("Cmin")
+
+      val dataAmax = data
+        .x(time.toJSArray)
+        .y(Amax.toJSArray)
+        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(128, 170, 249)))
+        .name("Amax")
+
+      val dataAmin = data
+        .x(time.toJSArray)
+        .y(Amin.toJSArray)
+        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(128, 170, 249)))
+        .name("Amin")
+
+      val dataTmax = data
+        .x(time.toJSArray)
+        .y(Tmax.toJSArray)
+        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(200, 235, 89  )))
+        .name("Tmax")
+
+      val dataTmin = data
+        .x(time.toJSArray)
+        .y(Tmin.toJSArray)
+        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(200, 235, 89  )))
+        .name("Tmin")
+
+      /********** Plot C, A, T : ***********/
       val data1 = data
         .x(time.toJSArray)
         .y(Cval.toJSArray)
@@ -401,7 +506,7 @@ object Client {
       // val config = Config.displayModeBar(false)
 
       val plot = Plotly.newPlot(plotDiv,
-        js.Array(data1, data2, data3),
+        js.Array(dataTmin,dataTmax,dataAmin,dataAmax,dataCmin,dataCmax, data1, data2, data3),
         layout)
 
     }
@@ -616,7 +721,7 @@ object Client {
 
            img(src := "img/CAT_Equation.png"), */
         h2("  Step 1 : Set up the parameters :"),
-        p(
+        h3(
           " Here you can change the parameters :"
         ),
         p("l: is the depreciation of the fishing infrastructures, from [1]"),
@@ -681,27 +786,19 @@ object Client {
         p(" "),
         p(check_crise,"Add a crisis to the scenario (for example, an oil spill)"),
 
+        h3(
+          " Here you can hoose the initial conditions:"
+        ),
 
-        div(buttonPlot),
+        p("Number of Animal at the begining of the simulation :"),
+        div(box_Ainit),
+        p("Amount of the Fishermen's infrasctructures at the begining of the simulation :"),
+        div(box_Cinit),
+        p("Number of Tourists at the begining of the simulation :"),
+        div(box_Tinit),
 
-        h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
-        div(plotDiv.render),
 
-        h2("Step 2 :Choose the controls: "),
-        div(p(check_Eps,
-          "I want to clean the beaches from",
-          box_MaxEps,
-          "% of the time, to ",
-          box_MinEps,
-          "% of the time")),
-        div(p(check_zeta,
-          "I want to have the possibility to close from",
-          box_MaxZeta,
-          "% of the parc, to ",
-          box_MinZeta,
-          "% of the parc")),
-
-        h2("Step 3 : Choose the limits on C, A and T: "),
+        h3("Choose the limits on C, A and T: "),
         div(p("Maximum on fisherman's capital :",
           box_MaxC,
           "   Minimum on fisherman's capital :",
@@ -715,7 +812,32 @@ object Client {
           "   Minimum on the number of tourists :",
           box_MinT)),
         div(buttonShowConstraints),
-        h2("Step 4 Compute your viability kernel: "),
+
+
+        h3(
+          " Here you can plot :"
+        ),
+
+        div(buttonPlot),
+
+        h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
+        div(plotDiv.render),
+
+        h2("Step 1 :Choose the controls: "),
+        div(p(check_Eps,
+          "I want to clean the beaches from",
+          box_MaxEps,
+          "% of the time, to ",
+          box_MinEps,
+          "% of the time")),
+        div(p(check_zeta,
+          "I want to have the possibility to close from",
+          box_MaxZeta,
+          "% of the parc, to ",
+          box_MinZeta,
+          "% of the parc")),
+
+        h2("Step 3 Compute your viability kernel: "),
         div(addButtonCalc),
         p(
           Rx {
