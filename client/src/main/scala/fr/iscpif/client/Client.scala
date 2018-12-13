@@ -65,30 +65,6 @@ object Client {
 
     def randomInts(nb: Int = 100, ratio: Int = 1000) = Seq.fill(nb)(rng.nextInt(ratio)).toJSArray
 
-
-    val sliderValue = Var("None")
-    val myDiv = input(marginTop := 200).render
-    org.scalajs.dom.document.body.appendChild(
-      span(
-        myDiv,
-        span(Rx {
-          sliderValue()
-        },
-          paddingLeft := 10
-        )
-      ))
-
-    val options = SliderOptions
-      .max(100)
-      .min(0.0)
-      .value(14.0)
-      .tooltip(SliderOptions.ALWAYS)
-
-    val slider = new Slider(myDiv, options._result)
-    slider.on(Slider.CHANGE, () => {
-      sliderValue() = slider.getValue.toString
-    })
-
     /* Definition des parametres */
 
 
@@ -710,6 +686,31 @@ object Client {
 
     /* HTML tags : */
 
+    val equationVisible = Var(false)
+
+    val sliderValue = Var("None")
+    val myDiv = input(marginTop := 200).render
+    org.scalajs.dom.document.body.appendChild(
+      span(
+        myDiv,
+        span(Rx {
+          sliderValue()
+        },
+          paddingLeft := 10
+        )
+      ))
+
+    val options = SliderOptions
+      .max(100)
+      .min(0.0)
+      .value(14.0)
+      .tooltip(SliderOptions.ALWAYS)
+
+    val slider = new Slider(myDiv, options._result)
+    slider.on(Slider.CHANGE, () => {
+      sliderValue() = slider.getValue.toString
+    })
+
 
     dom.document.body.appendChild(
       div(width := "80%", height := "80%")(
@@ -721,6 +722,10 @@ object Client {
           "capacity of the viability expert agent to help a player to analyze one viability kernel corresponding to a set of constraints that he himself decided, but also to compare with alternative kernels/constraints explored by himself or proposed by other players during the negotiation."
           + " Therefore, this provides the players with a basic way to quantify and analyze the degree of feasibility and viability of proposals. Instead of just comparing the constraint sets, the viability expert compares the viability kernels, which are based on the link between the dynamics and the constraints.\n."
           + " Small changes in constraint sets can have a broad range of impacts depending on the dynamics.")(width := 800)),
+        div(
+          button("About the equations", btn_primary, onclick := { ()=> equationVisible.update(!equationVisible.now)} ),
+          equationVisible.expand(panel("C represents the fishermen's capital (boats, income...)," +
+            " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
         p(
           buttonIcon("About the equations", btn_primary).expandOnclick(panel("C represents the fishermen's capital (boats, income...)," +
             " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
@@ -730,168 +735,168 @@ object Client {
           buttonIcon("Equation", btn_primary).expandOnclick(img(src := "img/CAT_Equation.png")(width := 400))),
 
 
-        /*   img(src := "img/CAT_Schemat.png"),
+      /*   img(src := "img/CAT_Schemat.png"),
 
-          div(
-             buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
-             onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
+        div(
+           buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
+           onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
 
-           img(src := "img/CAT_Equation.png"), */
-        h2("  Step 1 : Set up the parameters :"),
-        h3(
-          " Here you can change the parameters :"
-        ),
-        p("l: is the depreciation of the fishing infrastructures, from [1]"),
-        div(box_l),
-        p("g: is the growth rate of the turtle population, from [2]"),
-        div(box_g),
-        p("M: is the maximum capacity of the environment, from [3]"),
-        div(box_M),
-        /*  p("h:"),
-          div(box_h),
-          p("c:"),
-          div(box_c), */
-        p("p: is the deaths caused by traditionnal fishing, from [4]"),
-        div(box_p),
-        p("a: is the attractiveness associated with high number of turtles"),
-        div(box_a),
-        p("e: is the attractiveness associated with high quality of fishermen’s infrastructures"),
-        div(box_e),
-        p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
-        div(box_eta),
-        p("phi: is the half saturation constant, namely the number of turtles at which tourist satisfaction is half maximum"),
-        div(box_phi),
-        /* p("d:"),
-         div(box_d),*/
-        p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
-        div(box_delta),
-        p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
-        div(box_mp),
-        p("mt : is the price paid by each tourists that goes to the fisherman's infrastrures, from [8]"),
-        div(box_mt),
+         img(src := "img/CAT_Equation.png"), */
+      h2("  Step 1 : Set up the parameters :"),
+      h3(
+        " Here you can change the parameters :"
+      ),
+      p("l: is the depreciation of the fishing infrastructures, from [1]"),
+      div(box_l),
+      p("g: is the growth rate of the turtle population, from [2]"),
+      div(box_g),
+      p("M: is the maximum capacity of the environment, from [3]"),
+      div(box_M),
+      /*  p("h:"),
+        div(box_h),
+        p("c:"),
+        div(box_c), */
+      p("p: is the deaths caused by traditionnal fishing, from [4]"),
+      div(box_p),
+      p("a: is the attractiveness associated with high number of turtles"),
+      div(box_a),
+      p("e: is the attractiveness associated with high quality of fishermen’s infrastructures"),
+      div(box_e),
+      p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
+      div(box_eta),
+      p("phi: is the half saturation constant, namely the number of turtles at which tourist satisfaction is half maximum"),
+      div(box_phi),
+      /* p("d:"),
+       div(box_d),*/
+      p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
+      div(box_delta),
+      p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
+      div(box_mp),
+      p("mt : is the price paid by each tourists that goes to the fisherman's infrastrures, from [8]"),
+      div(box_mt),
 
-        p(
-          buttonIcon("References for the parameters", btn_primary).expandOnclick(panel(
-            "[1] Christina A.D. Semeniuk, Wolfgang Haider, and Kristina. Cooper, Andrew D. Rothley." +
-              " A linked model of animal ecology and human behavior for the management of wildlife tourism. Ecological Modelling, 2010.\n" +
+      p(
+        buttonIcon("References for the parameters", btn_primary).expandOnclick(panel(
+          "[1] Christina A.D. Semeniuk, Wolfgang Haider, and Kristina. Cooper, Andrew D. Rothley." +
+            " A linked model of animal ecology and human behavior for the management of wildlife tourism. Ecological Modelling, 2010.\n" +
 
-              "[2] JOHN R. HENDRICKSON. The green sea turtle, chelonia mydas (linn.) in malaya and sarawak." +
-              " Proceedings of the Zoological Society of London, 130(4):455–535. \n" +
+            "[2] JOHN R. HENDRICKSON. The green sea turtle, chelonia mydas (linn.) in malaya and sarawak." +
+            " Proceedings of the Zoological Society of London, 130(4):455–535. \n" +
 
-              "[3] Brendan Godley, Annette C Broderick, and Graeme. Hays. Nesting of green turtles (chelonia mydas) at ascension island, south atlantic." +
-              " biological conservation. Biological conservation, 97(22):151–158, februay 2001.\n" +
+            "[3] Brendan Godley, Annette C Broderick, and Graeme. Hays. Nesting of green turtles (chelonia mydas) at ascension island, south atlantic." +
+            " biological conservation. Biological conservation, 97(22):151–158, februay 2001.\n" +
 
-              "[4] Bugonia Leandro, do Valle (UFRJ) Rogerio, de Aragao Bastos, and Maria Virgınia Petryb. Marine debris and human impacts on sea turtles " +
-              "in southern brazil. Marine Pollution Bulletin, Volume 42, Issue 12, pages 1330–1334, December 2001. \n" +
+            "[4] Bugonia Leandro, do Valle (UFRJ) Rogerio, de Aragao Bastos, and Maria Virgınia Petryb. Marine debris and human impacts on sea turtles " +
+            "in southern brazil. Marine Pollution Bulletin, Volume 42, Issue 12, pages 1330–1334, December 2001. \n" +
 
-              " [5] LARS BEJDER, AMY SAMUELS, HAL WHITEHEAD, NICK GALES, JANET MANN, RICHARD CONNOR, MIKE HEITHAUS, JANA WATSON-CAPPS, CINDY FLAHERTY, " +
-              "and MICHAEL KRÜTZEN. De- cline in relative abundance of bottlenose dolphins exposed to long-term disturbance. Conservation Biology, 20(6):1791–1798.\n" +
+            " [5] LARS BEJDER, AMY SAMUELS, HAL WHITEHEAD, NICK GALES, JANET MANN, RICHARD CONNOR, MIKE HEITHAUS, JANA WATSON-CAPPS, CINDY FLAHERTY, " +
+            "and MICHAEL KRÜTZEN. De- cline in relative abundance of bottlenose dolphins exposed to long-term disturbance. Conservation Biology, 20(6):1791–1798.\n" +
 
-              " [6] Lee Bun, Song. Measurement of capital depreciation within the japanese fishing fleet. The Review of Economics and Statistics," +
-              " Vol. 60, No. 2, pages 225–237, Apr. 1978. \n" +
-
-
-              " [7] Fabricio Molica de Mendonca (UFSJ), Lıgia Krausea, and Ri- cardo Coutinho (UFF). A cadeia produtiva da pesca artesanal em arraial do cabo:" +
-              " Analise e propostas de melhoria. ENCONTRO NACIONAL DE ENGENHARIA DE PRODUCAO Maturidade e desafios da Engenharia de Producao: competitividade das" +
-              " empresas, condicoes de trabalho, meio ambiente, pages 1330–1334, October 2010.\n" +
-
-              " [8] Valeria G. da Vinha (UFRJ), Peter May (CPDA/UFRRJ), and Liandra Peres Caldasso (CPDA/UFRRJ). Sustentabilidade da reserva " +
-              "extrativista marinha de arraial do cabo, rj: tecnicas de pesquisa e resultados. 2008.\n"
-
-          )(width := 800))),
-
-        p(" "),
-        p(check_crise, "Add a crisis to the scenario (for example, an oil spill)"),
-
-        h3(
-          " Here you can hoose the initial conditions:"
-        ),
-
-        p("Number of Animal at the begining of the simulation :"),
-        div(box_Ainit),
-        p("Amount of the Fishermen's infrasctructures at the begining of the simulation :"),
-        div(box_Cinit),
-        p("Number of Tourists at the begining of the simulation :"),
-        div(box_Tinit),
+            " [6] Lee Bun, Song. Measurement of capital depreciation within the japanese fishing fleet. The Review of Economics and Statistics," +
+            " Vol. 60, No. 2, pages 225–237, Apr. 1978. \n" +
 
 
-        h3("Choose the limits on C, A and T: "),
-        div(p("Maximum on fisherman's capital :",
-          box_MaxC,
-          "   Minimum on fisherman's capital :",
-          box_MinC)),
-        div(p("Maximum on the number of animals :",
-          box_MaxA,
-          "   Minimum on the number of animals :",
-          box_MinA)),
-        div(p("Maximum on the number of tourists :",
-          box_MaxT,
-          "   Minimum on the number of tourists :",
-          box_MinT)),
-        div(buttonShowConstraints),
+            " [7] Fabricio Molica de Mendonca (UFSJ), Lıgia Krausea, and Ri- cardo Coutinho (UFF). A cadeia produtiva da pesca artesanal em arraial do cabo:" +
+            " Analise e propostas de melhoria. ENCONTRO NACIONAL DE ENGENHARIA DE PRODUCAO Maturidade e desafios da Engenharia de Producao: competitividade das" +
+            " empresas, condicoes de trabalho, meio ambiente, pages 1330–1334, October 2010.\n" +
+
+            " [8] Valeria G. da Vinha (UFRJ), Peter May (CPDA/UFRRJ), and Liandra Peres Caldasso (CPDA/UFRRJ). Sustentabilidade da reserva " +
+            "extrativista marinha de arraial do cabo, rj: tecnicas de pesquisa e resultados. 2008.\n"
+
+        )(width := 800))),
+
+      p(" "),
+      p(check_crise, "Add a crisis to the scenario (for example, an oil spill)"),
+
+      h3(
+        " Here you can hoose the initial conditions:"
+      ),
+
+      p("Number of Animal at the begining of the simulation :"),
+      div(box_Ainit),
+      p("Amount of the Fishermen's infrasctructures at the begining of the simulation :"),
+      div(box_Cinit),
+      p("Number of Tourists at the begining of the simulation :"),
+      div(box_Tinit),
 
 
-        h3(
-          " Here you can plot :"
-        ),
+      h3("Choose the limits on C, A and T: "),
+      div(p("Maximum on fisherman's capital :",
+        box_MaxC,
+        "   Minimum on fisherman's capital :",
+        box_MinC)),
+      div(p("Maximum on the number of animals :",
+        box_MaxA,
+        "   Minimum on the number of animals :",
+        box_MinA)),
+      div(p("Maximum on the number of tourists :",
+        box_MaxT,
+        "   Minimum on the number of tourists :",
+        box_MinT)),
+      div(buttonShowConstraints),
 
-        div(buttonPlot),
 
-        h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
-        div(plotDiv.render),
+      h3(
+        " Here you can plot :"
+      ),
 
-        h2("Step 1 :Choose the controls: "),
-        div(p(check_Eps,
-          "I want to clean the beaches from",
-          box_MaxEps,
-          "% of the time, to ",
-          box_MinEps,
-          "% of the time")),
-        div(p(check_zeta,
-          "I want to have the possibility to close from",
-          box_MaxZeta,
-          "% of the parc, to ",
-          box_MinZeta,
-          "% of the parc")),
+      div(buttonPlot),
 
-        h2("Step 3 Compute your viability kernel: "),
-        div(addButtonCalc),
-        p(
-          Rx {
-            kernelStatus() match {
-              case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
-                kr.message
-              case ks: KernelStatus =>
-                ks.kernelResult match {
-                  case None => "Weird case ..."
-                  case Some(kr: KernelResult) =>
+      h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
+      div(plotDiv.render),
 
-                    // val kr = kernelStatus.now
-                    s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
-                      if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
-                      else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
-                    }
-                }
-            }
+      h2("Step 1 :Choose the controls: "),
+      div(p(check_Eps,
+        "I want to clean the beaches from",
+        box_MaxEps,
+        "% of the time, to ",
+        box_MinEps,
+        "% of the time")),
+      div(p(check_zeta,
+        "I want to have the possibility to close from",
+        box_MaxZeta,
+        "% of the parc, to ",
+        box_MinZeta,
+        "% of the parc")),
+
+      h2("Step 3 Compute your viability kernel: "),
+      div(addButtonCalc),
+      p(
+        Rx {
+          kernelStatus() match {
+            case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
+              kr.message
+            case ks: KernelStatus =>
+              ks.kernelResult match {
+                case None => "Weird case ..."
+                case Some(kr: KernelResult) =>
+
+                  // val kr = kernelStatus.now
+                  s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
+                    if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+                    else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
+                  }
+              }
           }
-        ),
-        div(input(`type` := "file", id := "file_input").render),
-        div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
-        div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
-        div(buttonTryThis),
-        div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
-        div(buttonTryThis2),
+        }
+      ),
+      div(input(`type` := "file", id := "file_input").render),
+      div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
+      div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
+      div(buttonTryThis),
+      div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
+      div(buttonTryThis2),
 
-        div(showKernelbutton),
-        div(show2DKernelbutton),
-        // pre(id := "content"),
-        div(KernelDiv0.render),
-        div(KernelDiv1.render),
-        div(KernelDiv2.render),
-        div(KernelDiv3.render)
-        //  div(addButtonVideOrNot),
+      div(showKernelbutton),
+      div(show2DKernelbutton),
+      // pre(id := "content"),
+      div(KernelDiv0.render),
+      div(KernelDiv1.render),
+      div(KernelDiv2.render),
+      div(KernelDiv3.render)
+      //  div(addButtonVideOrNot),
 
-      ).render
+    ).render
     )
   }
 }
