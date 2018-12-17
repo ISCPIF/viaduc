@@ -30,6 +30,7 @@ class Servlet extends ScalatraServlet {
       tags.head(
         tags.meta(tags.httpEquiv := "Content-Type", tags.content := "text/html; charset=UTF-8"),
         tags.link(tags.rel := "stylesheet", tags.`type` := "text/css", href := "css/deps.css"),
+        tags.link(tags.rel := "stylesheet", tags.`type` := "text/css", href := "css/style.css"),
         tags.script(tags.`type` := "text/javascript", tags.src := "js/deps.js"),
         tags.script(tags.`type` := "text/javascript", tags.src := "js/viaduc.js"),
       ),

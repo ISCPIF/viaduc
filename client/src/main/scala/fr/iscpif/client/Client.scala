@@ -80,9 +80,10 @@ object Client {
           box_l.value
       }
 */
+
     val box_g = input(
       `type` := "text",
-      value := "0.37"
+      value := "0.208"
     ).render
 
     val box_M = input(
@@ -90,15 +91,16 @@ object Client {
       value := "36036"
     ).render
 
-    /*  val box_h = input(
-        `type` := "text",
-        value := "0.00001"
-      ).render */
-
-    /*  val box_c = input(
+    val box_ip = input(
         `type` := "text",
         value := "0.01"
-      ).render */
+      ).render
+
+    val box_it = input(
+      `type` := "text",
+      value := "0.01"
+    ).render
+
 
     val box_p = input(
       `type` := "text",
@@ -260,9 +262,11 @@ object Client {
     var Cinit = box_Cinit.value.toDouble
     var Ainit = box_Ainit.value.toDouble
     var Tinit = box_Tinit.value.toDouble
-    var t_max = 500
+    var t_max = 10000
 
-    var Cval = Array(Cinit / 10)
+
+
+    var Cval = Array(Cinit / 100)
     var Aval = Array(Ainit)
     var Tval = Array(Tinit)
     var time = Array(0)
@@ -270,11 +274,11 @@ object Client {
     for (t <- 1 to t_max) {
 
       val Catinit = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-        box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-        eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
+        box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+        eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+        box_mt.value.toDouble,box_ip.value.toDouble,box_it.value.toDouble, Cval.last * 100, Aval.last, Tval.last)
 
-      Cval = concat(Cval, Array(Catinit(0) / 10))
+      Cval = concat(Cval, Array(Catinit(0) / 100))
       Aval = concat(Aval, Array(Catinit(1)))
       Tval = concat(Tval, Array(Catinit(2)))
       time = concat(time, Array(t))
@@ -375,26 +379,34 @@ object Client {
       var time = Array(0)
 
       val coefAc = 100 // coeficient Animaux crise
-      val Tc = 1000 // temps t crise
+      val Tc = 100 // temps t crise
 
       var Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-        box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-        eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, Cinit, Ainit, Tinit)
+        box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+        eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+        box_mt.value.toDouble,box_ip.value.toDouble,box_it.value.toDouble, Cinit , Ainit, Tinit)
 
+    //  println(s"zeta $zeta")
+
+    /*  println(s"zeta $zeta, l : ${box_l.value.toDouble}, g: ${box_g.value.toDouble}, M: ${box_M.value.toDouble}, h: ${box_h.value.toDouble}"+
+        s"alpha: ${box_alpha.value.toDouble}, p: ${box_p.value.toDouble}, a: ${box_a.value.toDouble},e: ${box_e.value.toDouble}, eta: ${box_eta.value.toDouble}"+
+        s"e: ${box_e.value.toDouble}, phi: ${box_phi.value.toDouble}, phi2: ${box_phi2.value.toDouble}, d: ${box_d.value.toDouble}, delta: ${box_delta.value.toDouble}, mp: ${box_mp.value.toDouble}"+
+        s"mt: ${box_mt.value.toDouble},ip: ${box_ip.value.toDouble},it: ${box_it.value.toDouble}, Cinit: ${Cinit} , Ainit: ${Ainit}, Tinit: ${Tinit}")
+*/
       // calcul:
       for (t <- 1 to t_max) {
 
-
         Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-          box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-          eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-          box_mt.value.toDouble, Cval.last * 10, Aval.last, Tval.last)
+          box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+          eps, box_phi.value.toDouble,box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+          box_mt.value.toDouble,box_ip.value.toDouble,box_it.value.toDouble, Cval.last , Aval.last, Tval.last)
+
+ //       println(s" C: ${Cat(0)} , A: ${Cat(1)}, T: ${Cat(2)}")
 
         if ((t == Tc) && (check_crise.checked)) {
           println("crisis")
-          Cval = concat(Cval, Array(Cat(0) / coefAc))
-          Aval = concat(Aval, Array(Cat(1)))
+          Cval = concat(Cval, Array(Cat(0) ))
+          Aval = concat(Aval, Array(Cat(1)/ coefAc))
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
 
@@ -405,7 +417,7 @@ object Client {
 
         } else {
 
-          Cval = concat(Cval, Array(Cat(0) / 10))
+          Cval = concat(Cval, Array(Cat(0)))
           Aval = concat(Aval, Array(Cat(1)))
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
@@ -415,71 +427,29 @@ object Client {
       }
       /** ******** Limites sur C, A, T : ***********/
       var Cmax = Array(box_MaxC.value.toDouble)
-      println(Cmax.length)
       Cmax = Cmax.padTo(t_max, box_MaxC.value.toDouble)
 
 
-      var Cmin = Array(box_MaxC.value.toDouble)
-      println(Cmin.length)
+      var Cmin = Array(box_MinC.value.toDouble)
       Cmin = Cmin.padTo(t_max, box_MinC.value.toDouble)
 
 
-      var Amax = Array(box_MaxC.value.toDouble)
-      println(Amax.length)
+      var Amax = Array(box_MaxA.value.toDouble)
       Amax = Amax.padTo(t_max, box_MaxA.value.toDouble)
 
 
-      var Amin = Array(box_MaxC.value.toDouble)
-      println(Amin.length)
+      var Amin = Array(box_MinA.value.toDouble)
       Amin = Amin.padTo(t_max, box_MinA.value.toDouble)
 
 
-      var Tmax = Array(box_MaxC.value.toDouble)
-      println(Tmax.length)
+      var Tmax = Array(box_MaxT.value.toDouble)
+
       Tmax = Tmax.padTo(t_max, box_MaxT.value.toDouble)
 
 
-      var Tmin = Array(box_MaxC.value.toDouble)
-      println(Tmin.length)
+      var Tmin = Array(box_MinT.value.toDouble)
+
       Tmin = Tmin.padTo(t_max, box_MinT.value.toDouble)
-
-
-      /** ******** Plot limites sur C, A, T : ***********/
-      val dataCmax = data
-        .x(time.toJSArray)
-        .y(Cmax.toJSArray)
-        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(249, 149, 128)))
-        .name("Cmax")
-
-      val dataCmin = data
-        .x(time.toJSArray)
-        .y(Cmin.toJSArray)
-        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(249, 149, 128)))
-        .name("Cmin")
-
-      val dataAmax = data
-        .x(time.toJSArray)
-        .y(Amax.toJSArray)
-        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(128, 170, 249)))
-        .name("Amax")
-
-      val dataAmin = data
-        .x(time.toJSArray)
-        .y(Amin.toJSArray)
-        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(128, 170, 249)))
-        .name("Amin")
-
-      val dataTmax = data
-        .x(time.toJSArray)
-        .y(Tmax.toJSArray)
-        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(200, 235, 89)))
-        .name("Tmax")
-
-      val dataTmin = data
-        .x(time.toJSArray)
-        .y(Tmin.toJSArray)
-        .set(plotlymarker.size(0.8).set(plotlycolor.rgb(200, 235, 89)))
-        .name("Tmin")
 
       /** ******** Plot C, A, T : ***********/
       val data1 = data
@@ -499,6 +469,47 @@ object Client {
         .y(Tval.toJSArray)
         .set(plotlymarker.size(1.0).set(plotlycolor.rgb(50, 205, 50)).set(plotlysymbol.cross))
         .name("T")
+
+      /** ******** Plot limites sur C, A, T : ***********/
+
+
+      val dataCmax = data
+        .x(time.toJSArray)
+        .y(Cmax.toJSArray)
+        .set(plotlymarker.size(0.5).set(plotlycolor.rgb(249, 149, 128)))
+        .name("Cmax")
+
+      val dataCmin = data
+        .x(time.toJSArray)
+        .y(Cmin.toJSArray)
+        .set(plotlymarker.size(0.5).set(plotlycolor.rgb(249, 149, 128)))
+        .name("Cmin")
+
+      val dataAmax = data
+        .x(time.toJSArray)
+        .y(Amax.toJSArray)
+        .set(plotlymarker.size(0.5).set(plotlycolor.rgb(128, 170, 249)))
+        .name("Amax")
+
+      val dataAmin = data
+        .x(time.toJSArray)
+        .y(Amin.toJSArray)
+        .set(plotlymarker.size(0.5).set(plotlycolor.rgb(128, 170, 249)))
+        .name("Amin")
+
+      val dataTmax = data
+        .x(time.toJSArray)
+        .y(Tmax.toJSArray)
+        .set(plotlymarker.size(0.5).set(plotlycolor.rgb(200, 235, 89)))
+        .name("Tmax")
+
+      val dataTmin = data
+        .x(time.toJSArray)
+        .y(Tmin.toJSArray)
+        .set(plotlymarker.size(0.5).set(plotlycolor.rgb(200, 235, 89)))
+        .name("Tmin")
+
+
 
       // val config = Config.displayModeBar(false)
 
@@ -588,12 +599,6 @@ object Client {
             .xaxis(plotlyaxis.title("Tourists"))
             .shapes(File2shapes.FileToshapes(text, 3))
 
-          /*      val layoutKernel = Layout
-                  .title("My Kernel")
-                  .showlegend(true)
-                  .yaxis(plotlyaxis.title("Tourists"))
-                  .xaxis(plotlyaxis.title("Turtles"))
-                  .shapes(myKernel) */
 
           val dataKernel = data
             .x((Array(1.5, 4.5)).toJSArray)
@@ -623,12 +628,7 @@ object Client {
             .xaxis(plotlyaxis.title("Turtles"))
             .shapes(File2shapes.FileToshapes(text, 0))
 
-          /*      val layoutKernel = Layout
-                  .title("My Kernel")
-                  .showlegend(true)
-                  .yaxis(plotlyaxis.title("Tourists"))
-                  .xaxis(plotlyaxis.title("Turtles"))
-                  .shapes(myKernel) */
+
 
           val dataKernel = data
             .x((Array(1.5, 4.5)).toJSArray)
@@ -646,47 +646,10 @@ object Client {
 
 
 
-
-    //"/Users/laetitiazaleski/Desktop"
-    //dom.File
-
-
-    //val myKernel = File2shapes.FileToshapes()
-
-    /*
-        val rect = js.Dynamic.literal(
-          `type` = "rect",
-          x0 = 3,
-          y0 = 1,
-          x1 = 6,
-          y1 = 2,
-          fillcolor = "rgba(128, 0, 128, 0.7)").asInstanceOf[Shape]
-
-      val layoutKernel = Layout
-          .title("My Kernel")
-          .showlegend(true)
-          .yaxis(plotlyaxis.title("Tourists"))
-          .xaxis(plotlyaxis.title("Turtles"))
-          .shapes(scalajs.js.Array(rect))
-
-      /*      val layoutKernel = Layout
-              .title("My Kernel")
-              .showlegend(true)
-              .yaxis(plotlyaxis.title("Tourists"))
-              .xaxis(plotlyaxis.title("Turtles"))
-              .shapes(myKernel) */
-
-            val dataKernel = data
-              .x((Array(1.5, 4.5)).toJSArray)
-              .y((Array(0.75, 0.75)).toJSArray)
-              .text("Kernel")
-
-            val plotshapes = Plotly.newPlot(KernelDiv, js.Array(dataKernel), layoutKernel)
-    */
-
     /* HTML tags : */
 
     val equationVisible = Var(false)
+    val paramVisible = Var(false)
 
     val sliderValue = Var("None")
     val myDiv = input(marginTop := 200).render
@@ -722,13 +685,11 @@ object Client {
           "capacity of the viability expert agent to help a player to analyze one viability kernel corresponding to a set of constraints that he himself decided, but also to compare with alternative kernels/constraints explored by himself or proposed by other players during the negotiation."
           + " Therefore, this provides the players with a basic way to quantify and analyze the degree of feasibility and viability of proposals. Instead of just comparing the constraint sets, the viability expert compares the viability kernels, which are based on the link between the dynamics and the constraints.\n."
           + " Small changes in constraint sets can have a broad range of impacts depending on the dynamics.")(width := 800)),
-        div(
+        p(
           button("About the equations", btn_primary, onclick := { ()=> equationVisible.update(!equationVisible.now)} ),
           equationVisible.expand(panel("C represents the fishermen's capital (boats, income...)," +
             " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
-        p(
-          buttonIcon("About the equations", btn_primary).expandOnclick(panel("C represents the fishermen's capital (boats, income...)," +
-            " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
+
         p(
           buttonIcon("Scheme", btn_primary).expandOnclick(img(src := "img/CAT_Schemat.png")(width := 400))),
         p(
@@ -742,40 +703,56 @@ object Client {
            onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
 
          img(src := "img/CAT_Equation.png"), */
-      h2("  Step 1 : Set up the parameters :"),
-      h3(
+        h2("  Step 1 : Set up the parameters :"),
+        h3(
         " Here you can change the parameters :"
       ),
-      p("l: is the depreciation of the fishing infrastructures, from [1]"),
-      div(box_l),
-      p("g: is the growth rate of the turtle population, from [2]"),
-      div(box_g),
-      p("M: is the maximum capacity of the environment, from [3]"),
-      div(box_M),
+        p(
+          button("Parameters", btn_primary, onclick := { ()=> paramVisible.update(!paramVisible.now)} ),
+          paramVisible.expand(div(box_g).render)),
+        h4("Parameters for Equation A:"),
+        p("g: is the growth rate of the turtle population, from [2]"),
+        div(box_g),
+        p("l: corresponds to the mortality rate of turtles related to direct interaction with tourists, from [1] "),
+        div(box_l),
+        p("p: is the deaths caused by traditionnal fishing, from [4]"),
+        div(box_p),
+        p("M: is the maximum capacity of the environment, from [3]"),
+        div(box_M),
+        p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
+        div(box_eta),
       /*  p("h:"),
         div(box_h),
         p("c:"),
         div(box_c), */
-      p("p: is the deaths caused by traditionnal fishing, from [4]"),
-      div(box_p),
-      p("a: is the attractiveness associated with high number of turtles"),
-      div(box_a),
-      p("e: is the attractiveness associated with high quality of fishermen’s infrastructures"),
-      div(box_e),
-      p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
-      div(box_eta),
-      p("phi: is the half saturation constant, namely the number of turtles at which tourist satisfaction is half maximum"),
-      div(box_phi),
-      /* p("d:"),
-       div(box_d),*/
-      p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
-      div(box_delta),
-      p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
-      div(box_mp),
-      p("mt : is the price paid by each tourists that goes to the fisherman's infrastrures, from [8]"),
-      div(box_mt),
 
-      p(
+        h4("Parameters for Equation C:"),
+        p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
+        div(box_delta),
+        p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
+        div(box_mp),
+        p("ip : is the proportion of fishing income that is invested in infrastructure"),
+        div(box_ip),
+        p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
+        div(box_mp),
+        p("it : is the proportion of tourism-related income that is invested in infrastructure [8]"),
+        div(box_it),
+
+
+        h4("Parameters for Equation T:"),
+        p("a: is the attractiveness associated with high number of turtles"),
+        div(box_a),
+        p("e: is the attractiveness associated with high quality of fishermen’s infrastructures"),
+        div(box_e),
+        p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
+        div(box_eta),
+        p("phi: is the half saturation constant, namely the number of turtles at which tourist satisfaction is half maximum"),
+        div(box_phi),
+        p("phi2: is the half-maximum saturation constraint related to fishing infrastructure"),
+        div(box_phi2),
+
+
+        p(
         buttonIcon("References for the parameters", btn_primary).expandOnclick(panel(
           "[1] Christina A.D. Semeniuk, Wolfgang Haider, and Kristina. Cooper, Andrew D. Rothley." +
             " A linked model of animal ecology and human behavior for the management of wildlife tourism. Ecological Modelling, 2010.\n" +
@@ -805,19 +782,19 @@ object Client {
 
         )(width := 800))),
 
-      p(" "),
-      p(check_crise, "Add a crisis to the scenario (for example, an oil spill)"),
+        p(" "),
+        p(check_crise, "Add a crisis to the scenario (for example, an oil spill)"),
 
-      h3(
-        " Here you can hoose the initial conditions:"
+        h3(
+        " Here you can choose the initial conditions:"
       ),
 
-      p("Number of Animal at the begining of the simulation :"),
-      div(box_Ainit),
-      p("Amount of the Fishermen's infrasctructures at the begining of the simulation :"),
-      div(box_Cinit),
-      p("Number of Tourists at the begining of the simulation :"),
-      div(box_Tinit),
+        p("Number of Animal at the begining of the simulation :"),
+        div(box_Ainit),
+        p("Amount of the Fishermen's infrasctructures at the begining of the simulation :"),
+        div(box_Cinit),
+        p("Number of Tourists at the begining of the simulation :"),
+        div(box_Tinit),
 
 
       h3("Choose the limits on C, A and T: "),
