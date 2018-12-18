@@ -92,9 +92,9 @@ object Client {
     ).render
 
     val box_ip = input(
-        `type` := "text",
-        value := "0.01"
-      ).render
+      `type` := "text",
+      value := "0.01"
+    ).render
 
     val box_it = input(
       `type` := "text",
@@ -265,7 +265,6 @@ object Client {
     var t_max = 10000
 
 
-
     var Cval = Array(Cinit / 100)
     var Aval = Array(Ainit)
     var Tval = Array(Tinit)
@@ -276,7 +275,7 @@ object Client {
       val Catinit = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble,box_ip.value.toDouble,box_it.value.toDouble, Cval.last * 100, Aval.last, Tval.last)
+        box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble, Cval.last * 100, Aval.last, Tval.last)
 
       Cval = concat(Cval, Array(Catinit(0) / 100))
       Aval = concat(Aval, Array(Catinit(1)))
@@ -384,29 +383,29 @@ object Client {
       var Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble,box_ip.value.toDouble,box_it.value.toDouble, Cinit , Ainit, Tinit)
+        box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble, Cinit, Ainit, Tinit)
 
-    //  println(s"zeta $zeta")
+      //  println(s"zeta $zeta")
 
-    /*  println(s"zeta $zeta, l : ${box_l.value.toDouble}, g: ${box_g.value.toDouble}, M: ${box_M.value.toDouble}, h: ${box_h.value.toDouble}"+
-        s"alpha: ${box_alpha.value.toDouble}, p: ${box_p.value.toDouble}, a: ${box_a.value.toDouble},e: ${box_e.value.toDouble}, eta: ${box_eta.value.toDouble}"+
-        s"e: ${box_e.value.toDouble}, phi: ${box_phi.value.toDouble}, phi2: ${box_phi2.value.toDouble}, d: ${box_d.value.toDouble}, delta: ${box_delta.value.toDouble}, mp: ${box_mp.value.toDouble}"+
-        s"mt: ${box_mt.value.toDouble},ip: ${box_ip.value.toDouble},it: ${box_it.value.toDouble}, Cinit: ${Cinit} , Ainit: ${Ainit}, Tinit: ${Tinit}")
-*/
+      /*  println(s"zeta $zeta, l : ${box_l.value.toDouble}, g: ${box_g.value.toDouble}, M: ${box_M.value.toDouble}, h: ${box_h.value.toDouble}"+
+          s"alpha: ${box_alpha.value.toDouble}, p: ${box_p.value.toDouble}, a: ${box_a.value.toDouble},e: ${box_e.value.toDouble}, eta: ${box_eta.value.toDouble}"+
+          s"e: ${box_e.value.toDouble}, phi: ${box_phi.value.toDouble}, phi2: ${box_phi2.value.toDouble}, d: ${box_d.value.toDouble}, delta: ${box_delta.value.toDouble}, mp: ${box_mp.value.toDouble}"+
+          s"mt: ${box_mt.value.toDouble},ip: ${box_ip.value.toDouble},it: ${box_it.value.toDouble}, Cinit: ${Cinit} , Ainit: ${Ainit}, Tinit: ${Tinit}")
+  */
       // calcul:
       for (t <- 1 to t_max) {
 
         Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
           box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-          eps, box_phi.value.toDouble,box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-          box_mt.value.toDouble,box_ip.value.toDouble,box_it.value.toDouble, Cval.last , Aval.last, Tval.last)
+          eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+          box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble, Cval.last, Aval.last, Tval.last)
 
- //       println(s" C: ${Cat(0)} , A: ${Cat(1)}, T: ${Cat(2)}")
+        //       println(s" C: ${Cat(0)} , A: ${Cat(1)}, T: ${Cat(2)}")
 
         if ((t == Tc) && (check_crise.checked)) {
           println("crisis")
-          Cval = concat(Cval, Array(Cat(0) ))
-          Aval = concat(Aval, Array(Cat(1)/ coefAc))
+          Cval = concat(Cval, Array(Cat(0)))
+          Aval = concat(Aval, Array(Cat(1) / coefAc))
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
 
@@ -629,7 +628,6 @@ object Client {
             .shapes(File2shapes.FileToshapes(text, 0))
 
 
-
           val dataKernel = data
             .x((Array(1.5, 4.5)).toJSArray)
             .y((Array(0.75, 0.75)).toJSArray)
@@ -652,16 +650,7 @@ object Client {
     val paramVisible = Var(false)
 
     val sliderValue = Var("None")
-    val myDiv = input(marginTop := 200).render
-    org.scalajs.dom.document.body.appendChild(
-      span(
-        myDiv,
-        span(Rx {
-          sliderValue()
-        },
-          paddingLeft := 10
-        )
-      ))
+    val aDiv = div(marginTop := 200).render
 
     val options = SliderOptions
       .max(100)
@@ -669,10 +658,19 @@ object Client {
       .value(14.0)
       .tooltip(SliderOptions.ALWAYS)
 
-    val slider = new Slider(myDiv, options._result)
+    val slider = Slider(aDiv, options)
     slider.on(Slider.CHANGE, () => {
       sliderValue() = slider.getValue.toString
     })
+
+    val foo = span(
+      aDiv,
+      span(Rx {
+        sliderValue()
+      },
+        paddingLeft := 10
+      )
+    )
 
 
     dom.document.body.appendChild(
@@ -686,29 +684,29 @@ object Client {
           + " Therefore, this provides the players with a basic way to quantify and analyze the degree of feasibility and viability of proposals. Instead of just comparing the constraint sets, the viability expert compares the viability kernels, which are based on the link between the dynamics and the constraints.\n."
           + " Small changes in constraint sets can have a broad range of impacts depending on the dynamics.")(width := 800)),
         p(
-          button("About the equations", btn_primary, onclick := { ()=> equationVisible.update(!equationVisible.now)} ),
+          button("About the equations", btn_primary, onclick := { () => equationVisible.update(!equationVisible.now) }),
           equationVisible.expand(panel("C represents the fishermen's capital (boats, income...)," +
             " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
-
+        foo,
         p(
           buttonIcon("Scheme", btn_primary).expandOnclick(img(src := "img/CAT_Schemat.png")(width := 400))),
         p(
           buttonIcon("Equation", btn_primary).expandOnclick(img(src := "img/CAT_Equation.png")(width := 400))),
 
 
-      /*   img(src := "img/CAT_Schemat.png"),
+        /*   img(src := "img/CAT_Schemat.png"),
 
-        div(
-           buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
-           onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
+          div(
+             buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
+             onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
 
-         img(src := "img/CAT_Equation.png"), */
+           img(src := "img/CAT_Equation.png"), */
         h2("  Step 1 : Set up the parameters :"),
         h3(
-        " Here you can change the parameters :"
-      ),
+          " Here you can change the parameters :"
+        ),
         p(
-          button("Parameters", btn_primary, onclick := { ()=> paramVisible.update(!paramVisible.now)} ),
+          button("Parameters", btn_primary, onclick := { () => paramVisible.update(!paramVisible.now) }),
           paramVisible.expand(div(box_g).render)),
         h4("Parameters for Equation A:"),
         p("g: is the growth rate of the turtle population, from [2]"),
@@ -721,10 +719,10 @@ object Client {
         div(box_M),
         p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
         div(box_eta),
-      /*  p("h:"),
-        div(box_h),
-        p("c:"),
-        div(box_c), */
+        /*  p("h:"),
+          div(box_h),
+          p("c:"),
+          div(box_c), */
 
         h4("Parameters for Equation C:"),
         p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
@@ -753,41 +751,41 @@ object Client {
 
 
         p(
-        buttonIcon("References for the parameters", btn_primary).expandOnclick(panel(
-          "[1] Christina A.D. Semeniuk, Wolfgang Haider, and Kristina. Cooper, Andrew D. Rothley." +
-            " A linked model of animal ecology and human behavior for the management of wildlife tourism. Ecological Modelling, 2010.\n" +
+          buttonIcon("References for the parameters", btn_primary).expandOnclick(panel(
+            "[1] Christina A.D. Semeniuk, Wolfgang Haider, and Kristina. Cooper, Andrew D. Rothley." +
+              " A linked model of animal ecology and human behavior for the management of wildlife tourism. Ecological Modelling, 2010.\n" +
 
-            "[2] JOHN R. HENDRICKSON. The green sea turtle, chelonia mydas (linn.) in malaya and sarawak." +
-            " Proceedings of the Zoological Society of London, 130(4):455–535. \n" +
+              "[2] JOHN R. HENDRICKSON. The green sea turtle, chelonia mydas (linn.) in malaya and sarawak." +
+              " Proceedings of the Zoological Society of London, 130(4):455–535. \n" +
 
-            "[3] Brendan Godley, Annette C Broderick, and Graeme. Hays. Nesting of green turtles (chelonia mydas) at ascension island, south atlantic." +
-            " biological conservation. Biological conservation, 97(22):151–158, februay 2001.\n" +
+              "[3] Brendan Godley, Annette C Broderick, and Graeme. Hays. Nesting of green turtles (chelonia mydas) at ascension island, south atlantic." +
+              " biological conservation. Biological conservation, 97(22):151–158, februay 2001.\n" +
 
-            "[4] Bugonia Leandro, do Valle (UFRJ) Rogerio, de Aragao Bastos, and Maria Virgınia Petryb. Marine debris and human impacts on sea turtles " +
-            "in southern brazil. Marine Pollution Bulletin, Volume 42, Issue 12, pages 1330–1334, December 2001. \n" +
+              "[4] Bugonia Leandro, do Valle (UFRJ) Rogerio, de Aragao Bastos, and Maria Virgınia Petryb. Marine debris and human impacts on sea turtles " +
+              "in southern brazil. Marine Pollution Bulletin, Volume 42, Issue 12, pages 1330–1334, December 2001. \n" +
 
-            " [5] LARS BEJDER, AMY SAMUELS, HAL WHITEHEAD, NICK GALES, JANET MANN, RICHARD CONNOR, MIKE HEITHAUS, JANA WATSON-CAPPS, CINDY FLAHERTY, " +
-            "and MICHAEL KRÜTZEN. De- cline in relative abundance of bottlenose dolphins exposed to long-term disturbance. Conservation Biology, 20(6):1791–1798.\n" +
+              " [5] LARS BEJDER, AMY SAMUELS, HAL WHITEHEAD, NICK GALES, JANET MANN, RICHARD CONNOR, MIKE HEITHAUS, JANA WATSON-CAPPS, CINDY FLAHERTY, " +
+              "and MICHAEL KRÜTZEN. De- cline in relative abundance of bottlenose dolphins exposed to long-term disturbance. Conservation Biology, 20(6):1791–1798.\n" +
 
-            " [6] Lee Bun, Song. Measurement of capital depreciation within the japanese fishing fleet. The Review of Economics and Statistics," +
-            " Vol. 60, No. 2, pages 225–237, Apr. 1978. \n" +
+              " [6] Lee Bun, Song. Measurement of capital depreciation within the japanese fishing fleet. The Review of Economics and Statistics," +
+              " Vol. 60, No. 2, pages 225–237, Apr. 1978. \n" +
 
 
-            " [7] Fabricio Molica de Mendonca (UFSJ), Lıgia Krausea, and Ri- cardo Coutinho (UFF). A cadeia produtiva da pesca artesanal em arraial do cabo:" +
-            " Analise e propostas de melhoria. ENCONTRO NACIONAL DE ENGENHARIA DE PRODUCAO Maturidade e desafios da Engenharia de Producao: competitividade das" +
-            " empresas, condicoes de trabalho, meio ambiente, pages 1330–1334, October 2010.\n" +
+              " [7] Fabricio Molica de Mendonca (UFSJ), Lıgia Krausea, and Ri- cardo Coutinho (UFF). A cadeia produtiva da pesca artesanal em arraial do cabo:" +
+              " Analise e propostas de melhoria. ENCONTRO NACIONAL DE ENGENHARIA DE PRODUCAO Maturidade e desafios da Engenharia de Producao: competitividade das" +
+              " empresas, condicoes de trabalho, meio ambiente, pages 1330–1334, October 2010.\n" +
 
-            " [8] Valeria G. da Vinha (UFRJ), Peter May (CPDA/UFRRJ), and Liandra Peres Caldasso (CPDA/UFRRJ). Sustentabilidade da reserva " +
-            "extrativista marinha de arraial do cabo, rj: tecnicas de pesquisa e resultados. 2008.\n"
+              " [8] Valeria G. da Vinha (UFRJ), Peter May (CPDA/UFRRJ), and Liandra Peres Caldasso (CPDA/UFRRJ). Sustentabilidade da reserva " +
+              "extrativista marinha de arraial do cabo, rj: tecnicas de pesquisa e resultados. 2008.\n"
 
-        )(width := 800))),
+          )(width := 800))),
 
         p(" "),
         p(check_crise, "Add a crisis to the scenario (for example, an oil spill)"),
 
         h3(
-        " Here you can choose the initial conditions:"
-      ),
+          " Here you can choose the initial conditions:"
+        ),
 
         p("Number of Animal at the begining of the simulation :"),
         div(box_Ainit),
@@ -797,83 +795,83 @@ object Client {
         div(box_Tinit),
 
 
-      h3("Choose the limits on C, A and T: "),
-      div(p("Maximum on fisherman's capital :",
-        box_MaxC,
-        "   Minimum on fisherman's capital :",
-        box_MinC)),
-      div(p("Maximum on the number of animals :",
-        box_MaxA,
-        "   Minimum on the number of animals :",
-        box_MinA)),
-      div(p("Maximum on the number of tourists :",
-        box_MaxT,
-        "   Minimum on the number of tourists :",
-        box_MinT)),
-      div(buttonShowConstraints),
+        h3("Choose the limits on C, A and T: "),
+        div(p("Maximum on fisherman's capital :",
+          box_MaxC,
+          "   Minimum on fisherman's capital :",
+          box_MinC)),
+        div(p("Maximum on the number of animals :",
+          box_MaxA,
+          "   Minimum on the number of animals :",
+          box_MinA)),
+        div(p("Maximum on the number of tourists :",
+          box_MaxT,
+          "   Minimum on the number of tourists :",
+          box_MinT)),
+        div(buttonShowConstraints),
 
 
-      h3(
-        " Here you can plot :"
-      ),
+        h3(
+          " Here you can plot :"
+        ),
 
-      div(buttonPlot),
+        div(buttonPlot),
 
-      h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
-      div(plotDiv.render),
+        h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
+        div(plotDiv.render),
 
-      h2("Step 1 :Choose the controls: "),
-      div(p(check_Eps,
-        "I want to clean the beaches from",
-        box_MaxEps,
-        "% of the time, to ",
-        box_MinEps,
-        "% of the time")),
-      div(p(check_zeta,
-        "I want to have the possibility to close from",
-        box_MaxZeta,
-        "% of the parc, to ",
-        box_MinZeta,
-        "% of the parc")),
+        h2("Step 1 :Choose the controls: "),
+        div(p(check_Eps,
+          "I want to clean the beaches from",
+          box_MaxEps,
+          "% of the time, to ",
+          box_MinEps,
+          "% of the time")),
+        div(p(check_zeta,
+          "I want to have the possibility to close from",
+          box_MaxZeta,
+          "% of the parc, to ",
+          box_MinZeta,
+          "% of the parc")),
 
-      h2("Step 3 Compute your viability kernel: "),
-      div(addButtonCalc),
-      p(
-        Rx {
-          kernelStatus() match {
-            case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
-              kr.message
-            case ks: KernelStatus =>
-              ks.kernelResult match {
-                case None => "Weird case ..."
-                case Some(kr: KernelResult) =>
+        h2("Step 3 Compute your viability kernel: "),
+        div(addButtonCalc),
+        p(
+          Rx {
+            kernelStatus() match {
+              case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
+                kr.message
+              case ks: KernelStatus =>
+                ks.kernelResult match {
+                  case None => "Weird case ..."
+                  case Some(kr: KernelResult) =>
 
-                  // val kr = kernelStatus.now
-                  s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
-                    if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
-                    else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
-                  }
-              }
+                    // val kr = kernelStatus.now
+                    s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
+                      if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
+                      else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
+                    }
+                }
+            }
           }
-        }
-      ),
-      div(input(`type` := "file", id := "file_input").render),
-      div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
-      div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
-      div(buttonTryThis),
-      div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
-      div(buttonTryThis2),
+        ),
+        div(input(`type` := "file", id := "file_input").render),
+        div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
+        div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
+        div(buttonTryThis),
+        div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
+        div(buttonTryThis2),
 
-      div(showKernelbutton),
-      div(show2DKernelbutton),
-      // pre(id := "content"),
-      div(KernelDiv0.render),
-      div(KernelDiv1.render),
-      div(KernelDiv2.render),
-      div(KernelDiv3.render)
-      //  div(addButtonVideOrNot),
+        div(showKernelbutton),
+        div(show2DKernelbutton),
+        // pre(id := "content"),
+        div(KernelDiv0.render),
+        div(KernelDiv1.render),
+        div(KernelDiv2.render),
+        div(KernelDiv3.render)
+        //  div(addButtonVideOrNot),
 
-    ).render
+      ).render
     )
   }
 }
