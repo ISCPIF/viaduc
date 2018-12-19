@@ -45,7 +45,7 @@ lazy val client = project.in(file("client")) settings(
     "com.definitelyscala" %%% "scala-js-plotlyjs" % "1.1.8",
     "com.lihaoyi" %%% "sourcecode" % "0.1.2"
   )
-) dependsOn (shared) enablePlugins (ExecNpmPlugin)
+) dependsOn (shared) enablePlugins (ScalaJSPlugin)
 
 lazy val server = project.in(file("server")) settings(
   organization := Organization,
