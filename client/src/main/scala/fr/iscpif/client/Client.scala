@@ -3,6 +3,7 @@ package fr.iscpif.client
 import java.nio.ByteBuffer
 
 import fr.iscpif.client.CAT_RK4._
+import fr.iscpif.client.SlidersUtils._
 import fr.iscpif.client.File2shapes._
 import boopickle.Default._
 import org.scalajs.dom
@@ -51,6 +52,7 @@ import scaladget.bootstrapnative.bsn._
 import shared.Api
 import shared.Data._
 
+
 import scaladget.bootstrapslider._
 
 object Client {
@@ -65,93 +67,53 @@ object Client {
 
     def randomInts(nb: Int = 100, ratio: Int = 1000) = Seq.fill(nb)(rng.nextInt(ratio)).toJSArray
 
+    /*** Sliders ***/
+/* ordre : box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+    box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+    eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+    box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble */
+    val slidersParam = Array(/*g : */ Array(0.5, 0.0, 0.208, 0.001), /* l: */Array(0.001, 0.0, 0.00052, 0.00001), /*p*/Array(0.03, 0.0, 0.0136, 0.0001),
+      /*zeta controle*/  /*M*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta*/ Array( 0.001,0.0, 0.0008, 0.0001),
+      /*eps controle*/   /*delta :*/ Array(0.1, 0.0, 0.01, 0.001),/*mp*/ Array(100.0, 0.0, 14.0, 1.0), /*ip*/ Array(1.0, 0.0, 0.01, 0.01),
+  /*mt*/ Array(100.0, 0.0, 25.0, 1.0), /*it*/  Array(1.0, 0.0, 0.01, 0.01),  /*alpha*/ Array(2.0, 0.0, 0.9, 0.1), /*a*/ Array(15000.0, 5000.0, 10000.0, 0.1),
+  /*phi*/Array(3000.0,1000.0 , 1833.0, 10.0), /*e*/ Array(100.0,0.0 , 50.0, 10.0), /*phi2*/ Array(50000.0,0.0 , 10000.0, 1000.0) )
+    var sliders : List[Slider] = List()
+    var foos : List[scalatags.JsDom.Modifier] = List()
+
+
+   for (set <- slidersParam) {
+     // val set = Array(0.01, 0.0, 0.00052)
+
+     val sliderValue = Var("None")
+     val aDiv = div(marginTop := 30).render
+
+     val options = SliderOptions
+       .max(set(0))
+       .min(set(1))
+       .value(set(2))
+       .step(set(3))
+       .tooltip(SliderOptions.ALWAYS)
+
+     val slider = Slider(aDiv, options)
+     slider.on(Slider.CHANGE, () => {
+       sliderValue() = slider.getValue.toString
+     })
+
+
+     val foo = span(
+       aDiv,
+       span(Rx {
+         sliderValue()
+       },
+         paddingLeft := 10
+       )
+     )
+
+     sliders = slider :: sliders
+     foos = foo :: foos
+    }
+
     /* Definition des parametres */
-
-
-    val box_l = input(
-      `type` := "text",
-      value := "0.00052"
-    ).render
-
-    /*  val output_l = span.render
-
-      box_zeta.onkeyup = (e: dom.Event) => {
-        output_l.textContent =
-          box_l.value
-      }
-*/
-
-    val box_g = input(
-      `type` := "text",
-      value := "0.208"
-    ).render
-
-    val box_M = input(
-      `type` := "text",
-      value := "36036"
-    ).render
-
-    val box_ip = input(
-      `type` := "text",
-      value := "0.01"
-    ).render
-
-    val box_it = input(
-      `type` := "text",
-      value := "0.01"
-    ).render
-
-
-    val box_p = input(
-      `type` := "text",
-      value := "0.0004"
-    ).render
-
-    val box_a = input(
-      `type` := "text",
-      value := "100000.0"
-    ).render
-
-    val box_e = input(
-      `type` := "text",
-      value := "100"
-    ).render
-
-    val box_eta = input(
-      `type` := "text",
-      value := "0.0008"
-    ).render
-
-    val box_phi = input(
-      `type` := "text",
-      value := "1833"
-    ).render
-
-    val box_phi2 = input(
-      `type` := "text",
-      value := "10000"
-    ).render
-
-
-    val box_delta = input(
-      `type` := "text",
-      value := "0.01"
-    ).render
-
-    val box_mp = input(
-      `type` := "text",
-      value := "14.0"
-    ).render
-
-    val box_mt = input(
-      `type` := "text",
-      value := "25"
-    ).render
-
-    val box_alpha = input(
-      `type` := "text",
-      value := "0.5"
-    ).render
 
     //  controles :
 
@@ -272,10 +234,10 @@ object Client {
     // calcul:
     for (t <- 1 to t_max) {
 
-      val Catinit = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-        box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-        eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble, Cval.last * 100, Aval.last, Tval.last)
+      val Catinit = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
+        sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
+        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
+        sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cval.last * 100, Aval.last, Tval.last)
 
       Cval = concat(Cval, Array(Catinit(0) / 100))
       Aval = concat(Aval, Array(Catinit(1)))
@@ -333,12 +295,10 @@ object Client {
 
 
     /* val clicked = Var("None")
-
      val buttonStyle: ModifierSeq = Seq(
        marginRight := 5,
        marginTop := 5
      )
-
      lazy val theRadios: SelectableButtons = radios()(
        selectableButton("No Crisis", onclick = radioAction),
        selectableButton("Oil Spill", true, onclick = radioAction)
@@ -380,10 +340,11 @@ object Client {
       val coefAc = 100 // coeficient Animaux crise
       val Tc = 100 // temps t crise
 
-      var Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-        box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-        eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble, Cinit, Ainit, Tinit)
+      var Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
+        sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
+        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
+        sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cinit, Ainit, Tinit)
+
 
       //  println(s"zeta $zeta")
 
@@ -395,10 +356,10 @@ object Client {
       // calcul:
       for (t <- 1 to t_max) {
 
-        Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-          box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-          eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-          box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble, Cval.last, Aval.last, Tval.last)
+        Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
+          sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
+          eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
+          sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cval.last, Aval.last, Tval.last)
 
         //       println(s" C: ${Cat(0)} , A: ${Cat(1)}, T: ${Cat(2)}")
 
@@ -543,10 +504,10 @@ object Client {
         }
 
         Post[Api].CalcKernel(KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
-          box_MaxT.value.toDouble, box_MinT.value.toDouble, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toInt,
-          box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-          box_phi.value.toDouble, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_h.value.toDouble,
-          box_mp.value.toDouble, box_mt.value.toDouble, box_MaxEps.value.toDouble, box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
+          box_MaxT.value.toDouble, box_MinT.value.toDouble, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
+          box_c.value.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
+          sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
+          sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, box_MaxEps.value.toDouble, box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
           box_MinZeta.value.toDouble)).call().foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
 
@@ -649,28 +610,6 @@ object Client {
     val equationVisible = Var(false)
     val paramVisible = Var(false)
 
-    val sliderValue = Var("None")
-    val aDiv = div(marginTop := 200).render
-
-    val options = SliderOptions
-      .max(100)
-      .min(0.0)
-      .value(14.0)
-      .tooltip(SliderOptions.ALWAYS)
-
-    val slider = Slider(aDiv, options)
-    slider.on(Slider.CHANGE, () => {
-      sliderValue() = slider.getValue.toString
-    })
-
-    val foo = span(
-      aDiv,
-      span(Rx {
-        sliderValue()
-      },
-        paddingLeft := 10
-      )
-    )
 
 
     dom.document.body.appendChild(
@@ -687,7 +626,6 @@ object Client {
           button("About the equations", btn_primary, onclick := { () => equationVisible.update(!equationVisible.now) }),
           equationVisible.expand(panel("C represents the fishermen's capital (boats, income...)," +
             " A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400))),
-        foo,
         p(
           buttonIcon("Scheme", btn_primary).expandOnclick(img(src := "img/CAT_Schemat.png")(width := 400))),
         p(
@@ -695,30 +633,28 @@ object Client {
 
 
         /*   img(src := "img/CAT_Schemat.png"),
-
           div(
              buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
              onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
-
            img(src := "img/CAT_Equation.png"), */
         h2("  Step 1 : Set up the parameters :"),
         h3(
           " Here you can change the parameters :"
         ),
-        p(
+      /*  p(
           button("Parameters", btn_primary, onclick := { () => paramVisible.update(!paramVisible.now) }),
-          paramVisible.expand(div(box_g).render)),
+          paramVisible.expand(div(box_g).render)),*/
         h4("Parameters for Equation A:"),
         p("g: is the growth rate of the turtle population, from [2]"),
-        div(box_g),
+        div(foos(0)),
         p("l: corresponds to the mortality rate of turtles related to direct interaction with tourists, from [1] "),
-        div(box_l),
+        div(foos(1)),
         p("p: is the deaths caused by traditionnal fishing, from [4]"),
-        div(box_p),
+        div(foos(2)),
         p("M: is the maximum capacity of the environment, from [3]"),
-        div(box_M),
+        div(foos(3)),
         p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
-        div(box_eta),
+        div(foos(4)),
         /*  p("h:"),
           div(box_h),
           p("c:"),
@@ -726,28 +662,28 @@ object Client {
 
         h4("Parameters for Equation C:"),
         p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
-        div(box_delta),
+        div(foos(5)),
         p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
-        div(box_mp),
+        div(foos(6)),
         p("ip : is the proportion of fishing income that is invested in infrastructure"),
-        div(box_ip),
+        div(foos(7)),
         p("mp: is the price for the number of fishes caught for each turtle caught, from [7]"),
-        div(box_mp),
+        div(foos(8)),
         p("it : is the proportion of tourism-related income that is invested in infrastructure [8]"),
-        div(box_it),
+        div(foos(9)),
 
 
         h4("Parameters for Equation T:"),
+        p("alpha: is the congestion parameter"),
+        div(foos(10)),
         p("a: is the attractiveness associated with high number of turtles"),
-        div(box_a),
+        div(foos(11)),
         p("e: is the attractiveness associated with high quality of fishermen’s infrastructures"),
-        div(box_e),
-        p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
-        div(box_eta),
+        div(foos(13)),
         p("phi: is the half saturation constant, namely the number of turtles at which tourist satisfaction is half maximum"),
-        div(box_phi),
+        div(foos(12)),
         p("phi2: is the half-maximum saturation constraint related to fishing infrastructure"),
-        div(box_phi2),
+        div(foos(14)),
 
 
         p(
