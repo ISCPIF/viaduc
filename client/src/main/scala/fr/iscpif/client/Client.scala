@@ -68,49 +68,49 @@ object Client {
     def randomInts(nb: Int = 100, ratio: Int = 1000) = Seq.fill(nb)(rng.nextInt(ratio)).toJSArray
 
     /*** Sliders ***/
-/* ordre : box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-    box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-    eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-    box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble */
+    /* ordre : box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
+        box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
+        eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
+        box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble */
     val slidersParam = Array(/*g : */ Array(0.5, 0.0, 0.208, 0.001), /* l: */Array(0.001, 0.0, 0.00052, 0.00001), /*p*/Array(0.03, 0.0, 0.0136, 0.0001),
       /*zeta controle*/  /*M*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta*/ Array( 0.001,0.0, 0.0008, 0.0001),
       /*eps controle*/   /*delta :*/ Array(0.1, 0.0, 0.01, 0.001),/*mp*/ Array(100.0, 0.0, 14.0, 1.0), /*ip*/ Array(1.0, 0.0, 0.01, 0.01),
-  /*mt*/ Array(100.0, 0.0, 25.0, 1.0), /*it*/  Array(1.0, 0.0, 0.01, 0.01),  /*alpha*/ Array(2.0, 0.0, 0.9, 0.1), /*a*/ Array(15000.0, 5000.0, 10000.0, 0.1),
-  /*phi*/Array(3000.0,1000.0 , 1833.0, 10.0), /*e*/ Array(100.0,0.0 , 50.0, 10.0), /*phi2*/ Array(50000.0,0.0 , 10000.0, 1000.0) )
+      /*mt*/ Array(100.0, 0.0, 25.0, 1.0), /*it*/  Array(1.0, 0.0, 0.01, 0.01),  /*alpha*/ Array(2.0, 0.0, 0.9, 0.1), /*a*/ Array(15000.0, 5000.0, 10000.0, 0.1),
+      /*phi*/Array(3000.0,1000.0 , 1833.0, 10.0), /*e*/ Array(100.0,0.0 , 50.0, 10.0), /*phi2*/ Array(50000.0,0.0 , 10000.0, 1000.0) )
     var sliders : List[Slider] = List()
     var foos : List[scalatags.JsDom.Modifier] = List()
 
 
-   for (set <- slidersParam) {
-     // val set = Array(0.01, 0.0, 0.00052)
+    for (set <- slidersParam) {
+      // val set = Array(0.01, 0.0, 0.00052)
 
-     val sliderValue = Var("None")
-     val aDiv = div(marginTop := 30).render
+      val sliderValue = Var(set(2).toString)
+      val aDiv = div(marginTop := 30).render
 
-     val options = SliderOptions
-       .max(set(0))
-       .min(set(1))
-       .value(set(2))
-       .step(set(3))
-       .tooltip(SliderOptions.ALWAYS)
+      val options = SliderOptions
+        .max(set(0))
+        .min(set(1))
+        .value(set(2))
+        .step(set(3))
+        .tooltip(SliderOptions.ALWAYS)
 
-     val slider = Slider(aDiv, options)
-     slider.on(Slider.CHANGE, () => {
-       sliderValue() = slider.getValue.toString
-     })
+      val slider = Slider(aDiv, options)
+      slider.on(Slider.CHANGE, () => {
+        sliderValue() = slider.getValue.toString
+      })
 
 
-     val foo = span(
-       aDiv,
-       span(Rx {
-         sliderValue()
-       },
-         paddingLeft := 10
-       )
-     )
+      val foo = span(
+        aDiv,
+        span(Rx {
+          sliderValue()
+        },
+          paddingLeft := 10
+        )
+      )
 
-     sliders = slider :: sliders
-     foos = foo :: foos
+      sliders = slider :: sliders
+      foos = foo :: foos
     }
 
     /* Definition des parametres */
@@ -641,9 +641,9 @@ object Client {
         h3(
           " Here you can change the parameters :"
         ),
-      /*  p(
-          button("Parameters", btn_primary, onclick := { () => paramVisible.update(!paramVisible.now) }),
-          paramVisible.expand(div(box_g).render)),*/
+        /*  p(
+            button("Parameters", btn_primary, onclick := { () => paramVisible.update(!paramVisible.now) }),
+            paramVisible.expand(div(box_g).render)),*/
         h4("Parameters for Equation A:"),
         p("g: is the growth rate of the turtle population, from [2]"),
         div(foos(0)),
@@ -826,5 +826,4 @@ object Post extends autowire.Client[ByteBuffer, Pickler, Pickler] {
   override def read[Result: Pickler](p: ByteBuffer) = Unpickle[Result].fromBytes(p)
 
   override def write[Result: Pickler](r: Result) = Pickle.intoBytes(r)
-
 }
