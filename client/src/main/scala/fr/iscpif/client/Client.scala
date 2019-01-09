@@ -115,6 +115,31 @@ object Client {
 
     /* Definition des parametres */
 
+    val sliderValue1 = Var("None")
+    val aDiv = div(marginTop := 30).render
+
+    val options1 = SliderOptions
+      .max(100)
+      .min(0)
+      .value(js.Array[scala.Double](14.0, 92.0))
+      .tooltip(SliderOptions.ALWAYS)
+
+    val slider1 = Slider(aDiv, options1)
+    slider1.on(Slider.CHANGE, () => {
+      sliderValue1() = slider1.getValue.toString
+    })
+
+
+    val epsslide = span(
+      aDiv,
+      span(Rx {
+        sliderValue1()
+      },
+        paddingLeft := 10
+      )
+    )
+
+
     //  controles :
 
     val check_Eps = input(
@@ -763,6 +788,7 @@ object Client {
           "% of the time, to ",
           box_MinEps,
           "% of the time")),
+        div(epsslide),
         div(p(check_zeta,
           "I want to have the possibility to close from",
           box_MaxZeta,
