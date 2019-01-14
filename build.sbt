@@ -21,7 +21,7 @@ val Resolvers = Seq(Resolver.sonatypeRepo("snapshots"),
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-def viabilitreeVersion = "2.0-alpha7"
+def viabilitreeVersion = "2.0"
 
 lazy val shared = project.in(file("shared")).settings(
   scalaVersion := ScalaVersion

@@ -9,6 +9,7 @@ import boopickle.Default._
 import org.scalajs.dom
 
 import scala.Array.concat
+import scala.List
 import scala.concurrent.Future
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel, ScalaJSDefined}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -72,11 +73,11 @@ object Client {
         box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
         box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble */
-    val slidersParam = Array(/*g : */ Array(0.5, 0.0, 0.208, 0.001), /* l: */Array(0.001, 0.0, 0.00052, 0.00001), /*p*/Array(0.03, 0.0, 0.0136, 0.0001),
-      /*zeta controle*/  /*M*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta*/ Array( 0.001,0.0, 0.0008, 0.0001),
-      /*eps controle*/   /*delta :*/ Array(0.1, 0.0, 0.01, 0.001),/*mp*/ Array(100.0, 0.0, 14.0, 1.0), /*ip*/ Array(1.0, 0.0, 0.01, 0.01),
-      /*mt*/ Array(100.0, 0.0, 25.0, 1.0), /*it*/  Array(1.0, 0.0, 0.01, 0.01),  /*alpha*/ Array(2.0, 0.0, 0.9, 0.1), /*a*/ Array(15000.0, 5000.0, 10000.0, 0.1),
-      /*phi*/Array(3000.0,1000.0 , 1833.0, 10.0), /*e*/ Array(100.0,0.0 , 50.0, 10.0), /*phi2*/ Array(50000.0,0.0 , 10000.0, 1000.0) )
+    val slidersParam = Array(/*g 0: */ Array(0.5, 0.0, 0.208, 0.001), /* l 1: */Array(0.001, 0.0, 0.00052, 0.00001), /*p 2*/Array(0.03, 0.0, 0.0136, 0.0001),
+      /*zeta controle*/  /*M 3*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta 4*/ Array( 0.001,0.0, 0.0008, 0.0001),
+      /*eps controle*/   /*delta 5:*/ Array(0.1, 0.0, 0.01, 0.001),/*mp 6*/ Array(100.0, 0.0, 14.0, 1.0), /*ip 7*/ Array(1.0, 0.0, 0.01, 0.01),
+      /*mt 8*/ Array(100.0, 0.0, 25.0, 1.0), /*it 9*/  Array(1.0, 0.0, 0.01, 0.01),  /*alpha 10*/ Array(2.0, 0.0, 0.9, 0.1), /*a 11*/ Array(15000.0, 5000.0, 10000.0, 0.1),
+      /*phi 12*/Array(3000.0,1000.0 , 1833.0, 10.0), /*e 13*/ Array(100.0,0.0 , 50.0, 10.0), /*phi2 14*/ Array(50000.0,0.0 , 10000.0, 1000.0) )
     var sliders : List[Slider] = List()
     var foos : List[scalatags.JsDom.Modifier] = List()
 
@@ -99,7 +100,6 @@ object Client {
         sliderValue() = slider.getValue.toString
       })
 
-
       val foo = span(
         aDiv,
         span(Rx {
@@ -111,7 +111,11 @@ object Client {
 
       sliders = slider :: sliders
       foos = foo :: foos
+
     }
+
+    sliders = sliders.reverse
+    foos = foos.reverse
 
     /* Definition des parametres */
 
@@ -249,7 +253,7 @@ object Client {
     var Cinit = box_Cinit.value.toDouble
     var Ainit = box_Ainit.value.toDouble
     var Tinit = box_Tinit.value.toDouble
-    var t_max = 10000
+    var t_max = 10//10000
 
 
     var Cval = Array(Cinit / 100)
@@ -351,7 +355,7 @@ object Client {
 
       val eps = 100.0
       val zeta = 0.1
-      val t_max = 10000
+      val t_max = 10//10000
 
       var Cinit = box_Cinit.value.toDouble
       var Ainit = box_Ainit.value.toDouble
@@ -363,21 +367,24 @@ object Client {
       var time = Array(0)
 
       val coefAc = 100 // coeficient Animaux crise
-      val Tc = 100 // temps t crise
+      val Tc = 10 // temps t crise
 
       var Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
         sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
         eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
         sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cinit, Ainit, Tinit)
 
+   /*   println(s"zeta $zeta, l : ${sliders(1).getValue().toString.toDouble}, g: ${sliders(0).getValue().toString.toDouble}, M: ${sliders(3).getValue().toString.toDouble}, h: ${box_h.value.toDouble}"+
+        s"alpha: ${sliders(10).getValue().toString.toDouble}, p: ${sliders(2).getValue().toString.toDouble}, a: ${sliders(11).getValue().toString.toDouble}," +
+        s"e: ${sliders(13).getValue().toString.toDouble}, eta: ${sliders(4).getValue().toString.toDouble}"+
+        s"phi: ${sliders(12).getValue().toString.toDouble}, phi2: ${sliders(14).getValue().toString.toDouble}") */
 
       //  println(s"zeta $zeta")
 
-      /*  println(s"zeta $zeta, l : ${box_l.value.toDouble}, g: ${box_g.value.toDouble}, M: ${box_M.value.toDouble}, h: ${box_h.value.toDouble}"+
-          s"alpha: ${box_alpha.value.toDouble}, p: ${box_p.value.toDouble}, a: ${box_a.value.toDouble},e: ${box_e.value.toDouble}, eta: ${box_eta.value.toDouble}"+
-          s"e: ${box_e.value.toDouble}, phi: ${box_phi.value.toDouble}, phi2: ${box_phi2.value.toDouble}, d: ${box_d.value.toDouble}, delta: ${box_delta.value.toDouble}, mp: ${box_mp.value.toDouble}"+
-          s"mt: ${box_mt.value.toDouble},ip: ${box_ip.value.toDouble},it: ${box_it.value.toDouble}, Cinit: ${Cinit} , Ainit: ${Ainit}, Tinit: ${Tinit}")
-  */
+
+      /* phi2: ${box_phi2.value.toDouble}, d: ${box_d.value.toDouble}, delta: ${box_delta.value.toDouble}, mp: ${box_mp.value.toDouble}"+
+          s"mt: ${box_mt.value.toDouble},ip: ${box_ip.value.toDouble},it: ${box_it.value.toDouble},*/
+
       // calcul:
       for (t <- 1 to t_max) {
 
@@ -406,6 +413,9 @@ object Client {
           Aval = concat(Aval, Array(Cat(1)))
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
+
+       //   println(s"Cval: ${Cat(0)} , Ainit: ${Cat(1)}, Tinit: ${Cat(2)}")
+
 
         }
 
@@ -534,6 +544,42 @@ object Client {
           sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
           sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, box_MaxEps.value.toDouble, box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
           box_MinZeta.value.toDouble)).call().foreach { kr: KernelResult =>
+          kernelStatus() = KernelStatus.computedKernel(kr)
+
+        }
+        println("********************* PARAM ***************")
+        println(box_MaxEps.value)
+        println(box_MaxZeta.value)
+      }
+
+
+    )
+
+    lazy val addButtonInter = button("Intersect Kernels",
+      onclick := { () =>
+        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+
+        Console.print("********************* Eps ***************")
+
+        if (!check_Eps.checked) {
+          box_MaxEps.value = "0"
+          box_MinEps.value = "0"
+          println("********************* Eps ***************")
+        }
+        if (!check_zeta.checked) {
+          box_MaxZeta.value = "0"
+          box_MinZeta.value = "0"
+          println("********************* Zeta ***************")
+        }
+
+        val parameters = KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
+          box_MaxT.value.toDouble, box_MinT.value.toDouble, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
+          box_c.value.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
+          sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
+          sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, box_MaxEps.value.toDouble, box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
+          box_MinZeta.value.toDouble)
+
+        Post[Api].InterKernels(parameters,parameters).call().foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
 
         }
@@ -818,6 +864,7 @@ object Client {
           }
         ),
         div(input(`type` := "file", id := "file_input").render),
+
         div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
         div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
         div(buttonTryThis),
