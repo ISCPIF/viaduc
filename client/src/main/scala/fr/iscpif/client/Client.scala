@@ -68,11 +68,15 @@ object Client {
 
     def randomInts(nb: Int = 100, ratio: Int = 1000) = Seq.fill(nb)(rng.nextInt(ratio)).toJSArray
 
-    /*** Sliders ***/
+    /***************** Sliders *****************/
+
     /* ordre : box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
         box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
         eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
         box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble */
+
+    /*** parametres ***/
+
     val slidersParam = Array(/*g 0: */ Array(0.5, 0.0, 0.208, 0.001), /* l 1: */Array(0.001, 0.0, 0.00052, 0.00001), /*p 2*/Array(0.03, 0.0, 0.0136, 0.0001),
       /*zeta controle*/  /*M 3*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta 4*/ Array( 0.001,0.0, 0.0008, 0.0001),
       /*eps controle*/   /*delta 5:*/ Array(0.1, 0.0, 0.01, 0.001),/*mp 6*/ Array(100.0, 0.0, 14.0, 1.0), /*ip 7*/ Array(1.0, 0.0, 0.01, 0.01),
@@ -117,31 +121,47 @@ object Client {
     sliders = sliders.reverse
     foos = foos.reverse
 
-    /* Definition des parametres */
-
-    val sliderValue1 = Var("None")
-    val aDiv = div(marginTop := 30).render
-
-    val options1 = SliderOptions
-      .max(100)
-      .min(0)
-      .value(js.Array[scala.Double](14.0, 92.0))
-      .tooltip(SliderOptions.ALWAYS)
-
-    val slider1 = Slider(aDiv, options1)
-    slider1.on(Slider.CHANGE, () => {
-      sliderValue1() = slider1.getValue.toString
-    })
+    /*** controles ***/
 
 
-    val epsslide = span(
-      aDiv,
-      span(Rx {
-        sliderValue1()
-      },
-        paddingLeft := 10
+    val slidersControl = Array(Array(30000.0, 0.0, 100.0), Array(30000.0, 0.0, 100.0),Array(30000.0, 0.0, 100.0),Array(0.2, 0.01, 0.01),Array(100.0, 0.0, 10.0))
+    var slidersDouble : List[Slider] = List()
+    var foosDouble : List[scalatags.JsDom.Modifier] = List()
+   // val aDiv = div(marginTop := 30).render
+
+
+    for (set <- slidersControl) {
+      val aDiv = div(marginTop := 30).render
+      val sliderValue = Var(s"${set(1)} , ${set(0)}")
+
+      val optionsDouble = SliderOptions
+        .max(set(0))
+        .min(set(1))
+        .value(js.Array[scala.Double](set(0), set(1)))
+        .step(set(2))
+        .tooltip(SliderOptions.ALWAYS)
+
+      val sliderDouble = Slider(aDiv, optionsDouble)
+      sliderDouble.on(Slider.CHANGE, () => {
+        sliderValue() = sliderDouble.getValue.toString
+      })
+
+
+      val slide = span(
+        aDiv,
+        span(Rx {
+          sliderValue()
+        },
+          paddingLeft := 10
+        )
       )
-    )
+
+      //println(sliderDouble.getValue())
+
+      slidersDouble = sliderDouble :: slidersDouble
+      foosDouble = slide :: foosDouble
+    }
+
 
 
     //  controles :
@@ -163,7 +183,7 @@ object Client {
 
     val box_MinEps = input(
       `type` := "text",
-      value := "0"
+      value := "100"
     ).render
 
     val box_MaxZeta = input(
@@ -173,39 +193,39 @@ object Client {
 
     val box_MinZeta = input(
       `type` := "text",
-      value := "20"
+      value := "1"
     ).render
 
     // box etats souhaitables :
 
     val box_MaxC = input(
       `type` := "text",
-      value := "100000"
+      value := "10000"
     ).render
 
     val box_MinC = input(
       `type` := "text",
-      value := "5000"
+      value := "0"
     ).render
 
     val box_MaxA = input(
       `type` := "text",
-      value := "10000"
+      value := "5000"
     ).render
 
     val box_MinA = input(
       `type` := "text",
-      value := "1000"
+      value := "0"
     ).render
 
     val box_MaxT = input(
       `type` := "text",
-      value := "15000"
+      value := "6000"
     ).render
 
     val box_MinT = input(
       `type` := "text",
-      value := "1000"
+      value := "0"
     ).render
 
 
@@ -525,52 +545,67 @@ object Client {
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
-        Console.print("********************* Eps ***************")
+        val C = slidersDouble(2).getValue().toString
+        val Cstring = C.split(",")
+        val Cmax = Cstring(0).toDouble
+        val Cmin = Cstring(1).toDouble
 
-        if (!check_Eps.checked) {
-          box_MaxEps.value = "0"
-          box_MinEps.value = "0"
-          println("********************* Eps ***************")
-        }
-        if (!check_zeta.checked) {
-          box_MaxZeta.value = "0"
-          box_MinZeta.value = "0"
-          println("********************* Zeta ***************")
-        }
+        val A = slidersDouble(3).getValue().toString
+        val Astring = A.split(",")
+        val Amax = Astring(0).toDouble
+        val Amin = Astring(1).toDouble
 
-        Post[Api].CalcKernel(KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
-          box_MaxT.value.toDouble, box_MinT.value.toDouble, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
-          box_c.value.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-          sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
-          sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, box_MaxEps.value.toDouble, box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
-          box_MinZeta.value.toDouble)).call().foreach { kr: KernelResult =>
+        val T = slidersDouble(4).getValue().toString
+        val Tstring = T.split(",")
+        val Tmax = Tstring(0).toDouble
+        val Tmin = Tstring(1).toDouble
+
+        val E = slidersDouble(0).getValue().toString
+        val Estring = E.split(",")
+        val Emax = Estring(0).toDouble
+        val Emin = Estring(1).toDouble
+
+        val Z= slidersDouble(1).getValue().toString
+        val Zstring = Z.split(",")
+        val Zmax = Zstring(0).toDouble
+        val Zmin = Zstring(1).toDouble
+
+
+
+
+        Post[Api].CalcKernel(KernelParameters(Cmax, Cmin, Amax, Amin,Tmax, Tmin, sliders(1).getValue().toString.toDouble,
+          sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
+          box_c.value.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble,
+          sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
+          sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble,
+          sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
+          sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, Emax, Emin, Zmax,Zmin)).call()
+          .foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
 
         }
-        println("********************* PARAM ***************")
-        println(box_MaxEps.value)
-        println(box_MaxZeta.value)
       }
 
 
     )
 
+
+    lazy val addButtonIntersection = button("Intersect Kernels",
+      onclick := { () =>
+        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+        val file1 = document.getElementById("file_inter1").asInstanceOf[HTMLInputElement].files.item(0)
+        val file2 = document.getElementById("file_inter2").asInstanceOf[HTMLInputElement].files.item(0)
+
+      }
+
+
+    )
+
+
+
     lazy val addButtonInter = button("Intersect Kernels",
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
-
-        Console.print("********************* Eps ***************")
-
-        if (!check_Eps.checked) {
-          box_MaxEps.value = "0"
-          box_MinEps.value = "0"
-          println("********************* Eps ***************")
-        }
-        if (!check_zeta.checked) {
-          box_MaxZeta.value = "0"
-          box_MinZeta.value = "0"
-          println("********************* Zeta ***************")
-        }
 
         val parameters = KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
           box_MaxT.value.toDouble, box_MinT.value.toDouble, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
@@ -583,9 +618,7 @@ object Client {
           kernelStatus() = KernelStatus.computedKernel(kr)
 
         }
-        println("********************* PARAM ***************")
-        println(box_MaxEps.value)
-        println(box_MaxZeta.value)
+
       }
 
 
@@ -599,6 +632,9 @@ object Client {
     val KernelDiv1 = div.render
     val KernelDiv2 = div.render
     val KernelDiv3 = div.render
+    val KernelDiv4 = div.render
+    val KernelDiv5 = div.render
+    val KernelDiv6 = div.render
 
     lazy val showKernelbutton = button("Show 3D Kernel from file",
       onclick := { () =>
@@ -643,7 +679,62 @@ object Client {
         reader.readAsText(file)
       })
 
-    lazy val show2DKernelbutton = button("Show 2D Kernel from file",
+    lazy val show2Kernelsbutton = button("Show multiple kernels from files",
+      onclick := { () =>
+        val file1 = document.getElementById("file_inter1").asInstanceOf[HTMLInputElement].files.item(0)
+        var reader1 = new FileReader()
+        val file2 = document.getElementById("file_inter2").asInstanceOf[HTMLInputElement].files.item(0)
+        var reader2 = new FileReader()
+
+        reader2.onload = (_: UIEvent) => {
+          val text1 = s"${reader1.result}"
+       //   println(text1.split(" ")(0))
+          val text2 = s"${reader2.result}"
+      //    println(text2.split(" ")(0))
+          val content = document.getElementById("content")
+
+          val layoutKernel4 = Layout //  1 : case Animaux Touristes
+            .title("My Kernel")
+            .showlegend(true)
+            .yaxis(plotlyaxis.title("Tourists"))
+            .xaxis(plotlyaxis.title("Turtles"))
+            .shapes(File2shapes.FileToshapes2(text1,text2, 1))
+
+          println("tout va bien 0")
+
+          val layoutKernel5 = Layout //  2 : case Capital Animaux
+            .title("My Kernel")
+            .showlegend(true)
+            .yaxis(plotlyaxis.title("Capital"))
+            .xaxis(plotlyaxis.title("Turtles"))
+            .shapes(File2shapes.FileToshapes2(text1,text2, 2))
+
+          println("tout va bien 1")
+
+          val layoutKernel6 = Layout //  3 : case Capital Animaux
+            .title("My Kernel")
+            .showlegend(true)
+            .yaxis(plotlyaxis.title("Capital"))
+            .xaxis(plotlyaxis.title("Tourists"))
+            .shapes(File2shapes.FileToshapes2(text1,text2, 3))
+
+          println("tout va bien 2")
+
+
+          val dataKernel = data
+            .x((Array(1.5, 4.5)).toJSArray)
+            .y((Array(0.75, 0.75)).toJSArray)
+            .text("Kernel")
+
+          val plotshapes1 = Plotly.newPlot(KernelDiv4, js.Array(dataKernel), layoutKernel4)
+          val plotshapes2 = Plotly.newPlot(KernelDiv5, js.Array(dataKernel), layoutKernel5)
+          val plotshapes3 = Plotly.newPlot(KernelDiv6, js.Array(dataKernel), layoutKernel6)
+        }
+        reader1.readAsText(file1)
+        reader2.readAsText(file2)
+      })
+
+  /*  lazy val show2DKernelbutton = button("Show 2D Kernel from file",
       onclick := { () =>
         val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
 
@@ -671,7 +762,7 @@ object Client {
         reader.readAsText(file)
 
 
-      })
+      })*/
 
 
 
@@ -802,19 +893,13 @@ object Client {
         div(box_Tinit),
 
 
-        h3("Choose the limits on C, A and T: "),
-        div(p("Maximum on fisherman's capital :",
-          box_MaxC,
-          "   Minimum on fisherman's capital :",
-          box_MinC)),
-        div(p("Maximum on the number of animals :",
-          box_MaxA,
-          "   Minimum on the number of animals :",
-          box_MinA)),
-        div(p("Maximum on the number of tourists :",
-          box_MaxT,
-          "   Minimum on the number of tourists :",
-          box_MinT)),
+        h3("Choose the limits on A, C and T: "),
+        div(p("Limits on the number of animals :")),
+        div(foosDouble(2)),
+        div(p("Limits on the infrastructure's capital :")),
+        div(foosDouble(3)),
+        div(p("Limits on the number of tourist :")),
+        div(foosDouble(4)),
         div(buttonShowConstraints),
 
 
@@ -828,19 +913,13 @@ object Client {
         div(plotDiv.render),
 
         h2("Step 1 :Choose the controls: "),
-        div(p(check_Eps,
-          "I want to clean the beaches from",
-          box_MaxEps,
-          "% of the time, to ",
-          box_MinEps,
-          "% of the time")),
-        div(epsslide),
-        div(p(check_zeta,
-          "I want to have the possibility to close from",
-          box_MaxZeta,
-          "% of the parc, to ",
-          box_MinZeta,
-          "% of the parc")),
+        div(p(check_Eps, "Use the control epsilon")),
+        p("Epsilon represents the effort to restore the environment, 100 is a maximum effort and 0 is no effort at all"),
+        div(foosDouble(0)),
+        div(p(check_zeta, "Use the control zeta")),
+        p("Zeta represents the areas reachable by the tourists, at 0.2 we consiter that the pars is completely open, " +
+          "at 0.01 we consider that only a small portion of the parc is poen to tourism"),
+        div(foosDouble(1)),
 
         h2("Step 3 Compute your viability kernel: "),
         div(addButtonCalc),
@@ -864,20 +943,52 @@ object Client {
           }
         ),
         div(input(`type` := "file", id := "file_input").render),
-
+/*
         div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
         div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
         div(buttonTryThis),
         div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
         div(buttonTryThis2),
-
+*/
         div(showKernelbutton),
-        div(show2DKernelbutton),
+      /*  div(show2DKernelbutton),
         // pre(id := "content"),
+        */
         div(KernelDiv0.render),
+        p(""),
         div(KernelDiv1.render),
+        p(""),
         div(KernelDiv2.render),
-        div(KernelDiv3.render)
+        p(""),
+        div(input(`type` := "file", id := "file_inter1").render, input(`type` := "file", id := "file_inter2").render),
+        p(""),
+        div(show2Kernelsbutton),
+        p(""),
+        div(KernelDiv4.render),
+        div(KernelDiv5.render),
+        div(KernelDiv6.render)
+     //   div(KernelDiv3.render),
+      /*  div(addButtonInter),
+        p(
+          Rx {
+            kernelStatus() match {
+              case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
+                kr.message
+              case ks: KernelStatus =>
+                ks.kernelResult match {
+                  case None => "Weird case ..."
+                  case Some(kr: KernelResult) =>
+
+                    // val kr = kernelStatus.now
+                    s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
+                      if (kr.isResultEmpty) "Your Intersection is empty, please try again by changing your controls and/or your constraints."
+                      else s"Congratulation, your Intersection is not empty ! ${kr.resultPath}"
+                    }
+                }
+            }
+          }
+        )
+*/
         //  div(addButtonVideOrNot),
 
       ).render
