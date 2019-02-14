@@ -46,7 +46,7 @@ import com.definitelyscala.plotlyjs.Plotly.Datum
 import scala.util.{Failure, Success}
 import rx._
 import scaladget.bootstrapnative.bsn._
-
+import Utils._
 
 //import shared.Api
 //import shared.Data._
@@ -68,22 +68,19 @@ object Client {
 
     def randomInts(nb: Int = 100, ratio: Int = 1000) = Seq.fill(nb)(rng.nextInt(ratio)).toJSArray
 
-    /***************** Sliders *****************/
+    /** *************** Sliders *****************/
 
-    /* ordre : box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-        box_alpha.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-        eps, box_phi.value.toDouble, box_phi2.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-        box_mt.value.toDouble, box_ip.value.toDouble, box_it.value.toDouble */
+    /** * parametres ***/
 
-    /*** parametres ***/
-
-    val slidersParam = Array(/*g 0: */ Array(0.5, 0.0, 0.208, 0.001), /* l 1: */Array(0.001, 0.0, 0.00052, 0.00001), /*p 2*/Array(0.03, 0.0, 0.0136, 0.0001),
-      /*zeta controle*/  /*M 3*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta 4*/ Array( 0.001,0.0, 0.0008, 0.0001),
-      /*eps controle*/   /*delta 5:*/ Array(0.1, 0.0, 0.01, 0.001),/*mp 6*/ Array(100.0, 0.0, 14.0, 1.0), /*ip 7*/ Array(1.0, 0.0, 0.01, 0.01),
-      /*mt 8*/ Array(100.0, 0.0, 25.0, 1.0), /*it 9*/  Array(1.0, 0.0, 0.01, 0.01),  /*alpha 10*/ Array(2.0, 0.0, 0.9, 0.1), /*a 11*/ Array(15000.0, 5000.0, 10000.0, 0.1),
-      /*phi 12*/Array(3000.0,1000.0 , 1833.0, 10.0), /*e 13*/ Array(100.0,0.0 , 50.0, 10.0), /*phi2 14*/ Array(50000.0,0.0 , 10000.0, 1000.0) )
-    var sliders : List[Slider] = List()
-    var foos : List[scalatags.JsDom.Modifier] = List()
+    val slidersParam = Array(/*g 0: */ Array(0.5, 0.0, 0.208, 0.001), /* l 1: */ Array(0.001, 0.0, 0.00052, 0.00001), /*p 2*/ Array(0.03, 0.0, 0.0136, 0.0001),
+      /*zeta controle*/
+      /*M 3*/ Array(50000.0, 10000.0, 36000.0, 1000.0), /*eta 4*/ Array(0.001, 0.0, 0.0008, 0.0001),
+      /*eps controle*/
+      /*delta 5:*/ Array(0.1, 0.0, 0.01, 0.001), /*mp 6*/ Array(100.0, 0.0, 14.0, 1.0), /*ip 7*/ Array(1.0, 0.0, 0.01, 0.01),
+      /*mt 8*/ Array(100.0, 0.0, 25.0, 1.0), /*it 9*/ Array(1.0, 0.0, 0.01, 0.01), /*alpha 10*/ Array(2.0, 0.0, 0.9, 0.1), /*a 11*/ Array(15000.0, 5000.0, 10000.0, 0.1),
+      /*phi 12*/ Array(3000.0, 1000.0, 1833.0, 10.0), /*e 13*/ Array(100.0, 0.0, 50.0, 10.0), /*phi2 14*/ Array(50000.0, 0.0, 10000.0, 1000.0))
+    var sliders: List[Slider] = List()
+    var foos: List[scalatags.JsDom.Modifier] = List()
 
 
     for (set <- slidersParam) {
@@ -121,13 +118,13 @@ object Client {
     sliders = sliders.reverse
     foos = foos.reverse
 
-    /*** controles ***/
+    /** * controles ***/
 
 
-    val slidersControl = Array(Array(30000.0, 0.0, 100.0), Array(30000.0, 0.0, 100.0),Array(30000.0, 0.0, 100.0),Array(0.2, 0.01, 0.01),Array(100.0, 0.0, 10.0))
-    var slidersDouble : List[Slider] = List()
-    var foosDouble : List[scalatags.JsDom.Modifier] = List()
-   // val aDiv = div(marginTop := 30).render
+    val slidersControl = Array(Array(30000.0, 0.0, 100.0), Array(30000.0, 0.0, 100.0), Array(30000.0, 0.0, 100.0), Array(0.2, 0.01, 0.01), Array(100.0, 0.0, 10.0))
+    var slidersDouble: List[Slider] = List()
+    var foosDouble: List[scalatags.JsDom.Modifier] = List()
+    // val aDiv = div(marginTop := 30).render
 
 
     for (set <- slidersControl) {
@@ -162,8 +159,20 @@ object Client {
       foosDouble = slide :: foosDouble
     }
 
+    val Cmax = sliderDoubleToDouble(slidersDouble, 3, 0)
+    val Cmin = sliderDoubleToDouble(slidersDouble, 3, 1)
 
+    val Amax = sliderDoubleToDouble(slidersDouble, 2, 0)
+    val Amin = sliderDoubleToDouble(slidersDouble, 2, 1)
 
+    val Tmax = sliderDoubleToDouble(slidersDouble, 4, 0)
+    val Tmin = sliderDoubleToDouble(slidersDouble, 4, 1)
+
+    val Emax = sliderDoubleToDouble(slidersDouble, 0, 0)
+    val Emin = sliderDoubleToDouble(slidersDouble, 0, 1)
+
+    val Zmax = sliderDoubleToDouble(slidersDouble, 1, 0)
+    val Zmin = sliderDoubleToDouble(slidersDouble, 1, 1)
     //  controles :
 
     val check_Eps = input(
@@ -175,59 +184,6 @@ object Client {
       `type` := "checkbox",
       value := "Zeta"
     ).render
-
-    val box_MaxEps = input(
-      `type` := "text",
-      value := "100"
-    ).render
-
-    val box_MinEps = input(
-      `type` := "text",
-      value := "100"
-    ).render
-
-    val box_MaxZeta = input(
-      `type` := "text",
-      value := "1"
-    ).render
-
-    val box_MinZeta = input(
-      `type` := "text",
-      value := "1"
-    ).render
-
-    // box etats souhaitables :
-
-    val box_MaxC = input(
-      `type` := "text",
-      value := "10000"
-    ).render
-
-    val box_MinC = input(
-      `type` := "text",
-      value := "0"
-    ).render
-
-    val box_MaxA = input(
-      `type` := "text",
-      value := "5000"
-    ).render
-
-    val box_MinA = input(
-      `type` := "text",
-      value := "0"
-    ).render
-
-    val box_MaxT = input(
-      `type` := "text",
-      value := "6000"
-    ).render
-
-    val box_MinT = input(
-      `type` := "text",
-      value := "0"
-    ).render
-
 
     // box conditions initiales :
 
@@ -247,45 +203,30 @@ object Client {
       value := "5000.0"
     ).render
 
-    // box inutiles : à retirer
-
-    val box_h = input(
-      `type` := "text",
-      value := "0"
-    ).render
-
-    val box_c = input(
-      `type` := "text",
-      value := "1"
-    ).render
-
-    val box_d = input(
-      `type` := "text",
-      value := "1.0"
-    ).render
 
     /* Calcul de CAT RK4 */
 
     // controles et valeur init:
-
+/*
     var eps = 100.0
     var zeta = 0.1
     var Cinit = box_Cinit.value.toDouble
     var Ainit = box_Ainit.value.toDouble
     var Tinit = box_Tinit.value.toDouble
-    var t_max = 10//10000
+    var t_max = 10 //10000
 
 
     var Cval = Array(Cinit / 100)
     var Aval = Array(Ainit)
     var Tval = Array(Tinit)
     var time = Array(0)
+
     // calcul:
     for (t <- 1 to t_max) {
 
-      val Catinit = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
+      val Catinit = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble,
         sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
+        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
         sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cval.last * 100, Aval.last, Tval.last)
 
       Cval = concat(Cval, Array(Catinit(0) / 100))
@@ -334,7 +275,7 @@ object Client {
       js.Array(data1, data2, data3),
       layout)
 
-
+*/
     /** ************* Bouton  Crise ***************/
 
 
@@ -343,17 +284,6 @@ object Client {
     ).render
 
 
-    /* val clicked = Var("None")
-     val buttonStyle: ModifierSeq = Seq(
-       marginRight := 5,
-       marginTop := 5
-     )
-     lazy val theRadios: SelectableButtons = radios()(
-       selectableButton("No Crisis", onclick = radioAction),
-       selectableButton("Oil Spill", true, onclick = radioAction)
-     )
-      def radioAction = () => active() = theRadios.active
-     */
     /** ******** Bouton Show Constraints ****************/
 
     val buttonShowConstraints = button("Show Constraints on above graph").render
@@ -363,7 +293,7 @@ object Client {
 
     val buttonTryThis = button("Try this !").render
     val buttonTryThis2 = button("Try this !").render
-
+/*
 
     /** ******** bouton pour rafraichir le graphe : ************/
 
@@ -375,7 +305,7 @@ object Client {
 
       val eps = 100.0
       val zeta = 0.1
-      val t_max = 10//10000
+      val t_max = 10 //10000
 
       var Cinit = box_Cinit.value.toDouble
       var Ainit = box_Ainit.value.toDouble
@@ -389,31 +319,19 @@ object Client {
       val coefAc = 100 // coeficient Animaux crise
       val Tc = 10 // temps t crise
 
-      var Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
+      var Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble,
         sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
+        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
         sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cinit, Ainit, Tinit)
-
-   /*   println(s"zeta $zeta, l : ${sliders(1).getValue().toString.toDouble}, g: ${sliders(0).getValue().toString.toDouble}, M: ${sliders(3).getValue().toString.toDouble}, h: ${box_h.value.toDouble}"+
-        s"alpha: ${sliders(10).getValue().toString.toDouble}, p: ${sliders(2).getValue().toString.toDouble}, a: ${sliders(11).getValue().toString.toDouble}," +
-        s"e: ${sliders(13).getValue().toString.toDouble}, eta: ${sliders(4).getValue().toString.toDouble}"+
-        s"phi: ${sliders(12).getValue().toString.toDouble}, phi2: ${sliders(14).getValue().toString.toDouble}") */
-
-      //  println(s"zeta $zeta")
-
-
-      /* phi2: ${box_phi2.value.toDouble}, d: ${box_d.value.toDouble}, delta: ${box_delta.value.toDouble}, mp: ${box_mp.value.toDouble}"+
-          s"mt: ${box_mt.value.toDouble},ip: ${box_ip.value.toDouble},it: ${box_it.value.toDouble},*/
 
       // calcul:
       for (t <- 1 to t_max) {
 
-        Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble , sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble, box_h.value.toDouble,
+        Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble,
           sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-          eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
+          eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
           sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cval.last, Aval.last, Tval.last)
 
-        //       println(s" C: ${Cat(0)} , A: ${Cat(1)}, T: ${Cat(2)}")
 
         if ((t == Tc) && (check_crise.checked)) {
           println("crisis")
@@ -422,11 +340,6 @@ object Client {
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
 
-          /* Cat = compute_CAT_RK4(zeta, box_l.value.toDouble, box_g.value.toDouble, box_M.value.toDouble, box_h.value.toDouble,
-            box_c.value.toDouble, box_p.value.toDouble, box_a.value.toDouble, box_e.value.toDouble, box_eta.value.toDouble,
-            eps, box_phi.value.toDouble, box_d.value.toDouble, box_delta.value.toDouble, box_mp.value.toDouble,
-            box_mt.value.toDouble, Cval.last * 10, Aval.last / coefAc, Tval.last) */
-
         } else {
 
           Cval = concat(Cval, Array(Cat(0)))
@@ -434,37 +347,10 @@ object Client {
           Tval = concat(Tval, Array(Cat(2)))
           time = concat(time, Array(t))
 
-       //   println(s"Cval: ${Cat(0)} , Ainit: ${Cat(1)}, Tinit: ${Cat(2)}")
-
-
         }
 
       }
-      /** ******** Limites sur C, A, T : ***********/
-      var Cmax = Array(box_MaxC.value.toDouble)
-      Cmax = Cmax.padTo(t_max, box_MaxC.value.toDouble)
 
-
-      var Cmin = Array(box_MinC.value.toDouble)
-      Cmin = Cmin.padTo(t_max, box_MinC.value.toDouble)
-
-
-      var Amax = Array(box_MaxA.value.toDouble)
-      Amax = Amax.padTo(t_max, box_MaxA.value.toDouble)
-
-
-      var Amin = Array(box_MinA.value.toDouble)
-      Amin = Amin.padTo(t_max, box_MinA.value.toDouble)
-
-
-      var Tmax = Array(box_MaxT.value.toDouble)
-
-      Tmax = Tmax.padTo(t_max, box_MaxT.value.toDouble)
-
-
-      var Tmin = Array(box_MinT.value.toDouble)
-
-      Tmin = Tmin.padTo(t_max, box_MinT.value.toDouble)
 
       /** ******** Plot C, A, T : ***********/
       val data1 = data
@@ -485,56 +371,71 @@ object Client {
         .set(plotlymarker.size(1.0).set(plotlycolor.rgb(50, 205, 50)).set(plotlysymbol.cross))
         .name("T")
 
-      /** ******** Plot limites sur C, A, T : ***********/
+
+
+      /** ******** Limites sur C, A, T : ***********/
+      var CmaxVal = Array(Cmax)
+      CmaxVal = CmaxVal.padTo(t_max,Cmax)
+
+      var CminVal = Array(Cmin)
+      CminVal = CminVal.padTo(t_max,Cmin)
+
+      var AmaxVal = Array(Amax)
+      AmaxVal = AmaxVal.padTo(t_max,Amax)
+
+      var AminVal = Array(Amin)
+      AminVal = AminVal.padTo(t_max,Amin)
+
+      var TmaxVal = Array(Tmax)
+      TmaxVal = TmaxVal.padTo(t_max,Tmax)
+
+      var TminVal = Array(Tmax)
+      TminVal = TminVal.padTo(t_max,Tmax)
 
 
       val dataCmax = data
         .x(time.toJSArray)
-        .y(Cmax.toJSArray)
+        .y(CmaxVal.toJSArray)
         .set(plotlymarker.size(0.5).set(plotlycolor.rgb(249, 149, 128)))
         .name("Cmax")
 
       val dataCmin = data
         .x(time.toJSArray)
-        .y(Cmin.toJSArray)
+        .y(CminVal.toJSArray)
         .set(plotlymarker.size(0.5).set(plotlycolor.rgb(249, 149, 128)))
         .name("Cmin")
 
       val dataAmax = data
         .x(time.toJSArray)
-        .y(Amax.toJSArray)
+        .y(AmaxVal.toJSArray)
         .set(plotlymarker.size(0.5).set(plotlycolor.rgb(128, 170, 249)))
         .name("Amax")
 
       val dataAmin = data
         .x(time.toJSArray)
-        .y(Amin.toJSArray)
+        .y(AminVal.toJSArray)
         .set(plotlymarker.size(0.5).set(plotlycolor.rgb(128, 170, 249)))
         .name("Amin")
 
       val dataTmax = data
         .x(time.toJSArray)
-        .y(Tmax.toJSArray)
+        .y(TmaxVal.toJSArray)
         .set(plotlymarker.size(0.5).set(plotlycolor.rgb(200, 235, 89)))
         .name("Tmax")
 
       val dataTmin = data
         .x(time.toJSArray)
-        .y(Tmin.toJSArray)
+        .y(TminVal.toJSArray)
         .set(plotlymarker.size(0.5).set(plotlycolor.rgb(200, 235, 89)))
         .name("Tmin")
 
-
-
-      // val config = Config.displayModeBar(false)
 
       val plot = Plotly.newPlot(plotDiv,
         js.Array(dataTmin, dataTmax, dataAmin, dataAmax, dataCmin, dataCmax, data1, data2, data3),
         layout)
 
     }
-
-
+*/
     /** *************** Noyau *********************/
 
     val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
@@ -545,47 +446,12 @@ object Client {
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
-        val C = slidersDouble(2).getValue().toString
-        val Cstring = C.split(",")
-        val Cmax = Cstring(0).toDouble
-        val Cmin = Cstring(1).toDouble
-
-        val A = slidersDouble(3).getValue().toString
-        val Astring = A.split(",")
-        val Amax = Astring(0).toDouble
-        val Amin = Astring(1).toDouble
-
-        val T = slidersDouble(4).getValue().toString
-        val Tstring = T.split(",")
-        val Tmax = Tstring(0).toDouble
-        val Tmin = Tstring(1).toDouble
-
-        val E = slidersDouble(0).getValue().toString
-        val Estring = E.split(",")
-        val Emax = Estring(0).toDouble
-        val Emin = Estring(1).toDouble
-
-        val Z= slidersDouble(1).getValue().toString
-        val Zstring = Z.split(",")
-        val Zmax = Zstring(0).toDouble
-        val Zmin = Zstring(1).toDouble
-
-
-
-
-        Post[Api].CalcKernel(KernelParameters(Cmax, Cmin, Amax, Amin,Tmax, Tmin, sliders(1).getValue().toString.toDouble,
-          sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
-          box_c.value.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble,
-          sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-          sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble,
-          sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
-          sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, Emax, Emin, Zmax,Zmin)).call()
+        Post[Api].CalcKernel(sliders2kernelParam(sliders, slidersDouble)).call()
           .foreach { kr: KernelResult =>
-          kernelStatus() = KernelStatus.computedKernel(kr)
+            kernelStatus() = KernelStatus.computedKernel(kr)
 
-        }
+          }
       }
-
 
     )
 
@@ -595,10 +461,11 @@ object Client {
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
         val file1 = document.getElementById("file_inter1").asInstanceOf[HTMLInputElement].files.item(0)
         val file2 = document.getElementById("file_inter2").asInstanceOf[HTMLInputElement].files.item(0)
+        val f1 = file1.name
+        val f2 = file2.name
 
+        Post[Api].IntersectionKernels(f1,f2).call()
       }
-
-
     )
 
 
@@ -607,21 +474,12 @@ object Client {
       onclick := { () =>
         kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
-        val parameters = KernelParameters(box_MaxC.value.toDouble, box_MinC.value.toDouble, box_MaxA.value.toDouble, box_MinA.value.toDouble,
-          box_MaxT.value.toDouble, box_MinT.value.toDouble, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toInt,
-          box_c.value.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-          sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, box_d.value.toDouble, sliders(5).getValue().toString.toDouble, box_h.value.toDouble,
-          sliders(6).getValue().toString.toDouble, sliders(8).getValue().toString.toDouble, box_MaxEps.value.toDouble, box_MinEps.value.toDouble, box_MaxZeta.value.toDouble,
-          box_MinZeta.value.toDouble)
+        val parameters = sliders2kernelParam(sliders, slidersDouble)
 
         Post[Api].InterKernels(parameters,parameters).call().foreach { kr: KernelResult =>
           kernelStatus() = KernelStatus.computedKernel(kr)
-
         }
-
       }
-
-
     )
 
     val onoff = Var(false)
@@ -666,6 +524,9 @@ object Client {
             .xaxis(plotlyaxis.title("Tourists"))
             .shapes(File2shapes.FileToshapes(text, 3))
 
+          val data = PlotData
+            .set(plotlymode.markers.lines)
+            .set(plotlymarker.set(plotlysymbol.square))
 
           val dataKernel = data
             .x((Array(1.5, 4.5)).toJSArray)
@@ -720,6 +581,9 @@ object Client {
 
           println("tout va bien 2")
 
+          val data = PlotData
+            .set(plotlymode.markers.lines)
+            .set(plotlymarker.set(plotlysymbol.square))
 
           val dataKernel = data
             .x((Array(1.5, 4.5)).toJSArray)
@@ -733,38 +597,6 @@ object Client {
         reader1.readAsText(file1)
         reader2.readAsText(file2)
       })
-
-  /*  lazy val show2DKernelbutton = button("Show 2D Kernel from file",
-      onclick := { () =>
-        val file = document.getElementById("file_input").asInstanceOf[HTMLInputElement].files.item(0)
-
-        var reader = new FileReader()
-        reader.onload = (_: UIEvent) => {
-          val text = s"${reader.result}"
-          val content = document.getElementById("content")
-
-          val layoutKernel = Layout //  1 : case Animaux Touristes
-            .title("My Kernel")
-            .showlegend(true)
-            .yaxis(plotlyaxis.title("Tourists"))
-            .xaxis(plotlyaxis.title("Turtles"))
-            .shapes(File2shapes.FileToshapes(text, 0))
-
-
-          val dataKernel = data
-            .x((Array(1.5, 4.5)).toJSArray)
-            .y((Array(0.75, 0.75)).toJSArray)
-            .text("Kernel")
-
-          val plotshapes = Plotly.newPlot(KernelDiv0, js.Array(dataKernel), layoutKernel)
-        }
-
-        reader.readAsText(file)
-
-
-      })*/
-
-
 
 
     /* HTML tags : */
@@ -794,18 +626,12 @@ object Client {
           buttonIcon("Equation", btn_primary).expandOnclick(img(src := "img/CAT_Equation.png")(width := 400))),
 
 
-        /*   img(src := "img/CAT_Schemat.png"),
-          div(
-             buttonIcon("Equation", btn_primary ).expandOnclick(panel("C represents the fishermen's capital (boats, income...), A represents the number of Animals (turtles) in the parc, T represents the number of tourists in the parc")(width := 400)),
-             onoff.expand(div(backgroundColor := "pink", onoff.now.toString), button("Set/Unset", onclick := {() => onoff() = !onoff.now}, btn_danger))),
-           img(src := "img/CAT_Equation.png"), */
+
         h2("  Step 1 : Set up the parameters :"),
         h3(
           " Here you can change the parameters :"
         ),
-        /*  p(
-            button("Parameters", btn_primary, onclick := { () => paramVisible.update(!paramVisible.now) }),
-            paramVisible.expand(div(box_g).render)),*/
+
         h4("Parameters for Equation A:"),
         p("g: is the growth rate of the turtle population, from [2]"),
         div(foos(0)),
@@ -817,10 +643,7 @@ object Client {
         div(foos(3)),
         p("eta: Is the dammages caused by a tourist on the environment, from [5]"),
         div(foos(4)),
-        /*  p("h:"),
-          div(box_h),
-          p("c:"),
-          div(box_c), */
+
 
         h4("Parameters for Equation C:"),
         p("delta: is the fishermen's infrastructures depreciation rate, from [6]"),
@@ -907,10 +730,10 @@ object Client {
           " Here you can plot :"
         ),
 
-        div(buttonPlot),
+      //  div(buttonPlot),
 
         h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
-        div(plotDiv.render),
+  //      div(plotDiv.render),
 
         h2("Step 1 :Choose the controls: "),
         div(p(check_Eps, "Use the control epsilon")),
@@ -934,7 +757,7 @@ object Client {
                   case Some(kr: KernelResult) =>
 
                     // val kr = kernelStatus.now
-                    s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
+                    s"${ks.message} :: " + {
                       if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
                       else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
                     }
@@ -943,17 +766,7 @@ object Client {
           }
         ),
         div(input(`type` := "file", id := "file_input").render),
-/*
-        div(p("If your kernel is empty, here are sevral sets of control and constraints you can try :")),
-        div(p("1000<C<100 000, 200<A<10000, 2000<T<20000, every controls possible:")),
-        div(buttonTryThis),
-        div(p("0<C<100000, 5000<A<100000, 0<T<10000, only restoring the environment:")),
-        div(buttonTryThis2),
-*/
         div(showKernelbutton),
-      /*  div(show2DKernelbutton),
-        // pre(id := "content"),
-        */
         div(KernelDiv0.render),
         p(""),
         div(KernelDiv1.render),
@@ -967,29 +780,6 @@ object Client {
         div(KernelDiv4.render),
         div(KernelDiv5.render),
         div(KernelDiv6.render)
-     //   div(KernelDiv3.render),
-      /*  div(addButtonInter),
-        p(
-          Rx {
-            kernelStatus() match {
-              case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
-                kr.message
-              case ks: KernelStatus =>
-                ks.kernelResult match {
-                  case None => "Weird case ..."
-                  case Some(kr: KernelResult) =>
-
-                    // val kr = kernelStatus.now
-                    s"${ks.message} :: eps max : ${box_MaxEps.value} " + {
-                      if (kr.isResultEmpty) "Your Intersection is empty, please try again by changing your controls and/or your constraints."
-                      else s"Congratulation, your Intersection is not empty ! ${kr.resultPath}"
-                    }
-                }
-            }
-          }
-        )
-*/
-        //  div(addButtonVideOrNot),
 
       ).render
     )

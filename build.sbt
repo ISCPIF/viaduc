@@ -1,6 +1,7 @@
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 
+
 val Organization = "fr.iscpif"
 val Name = "simparc-UI"
 val Version = "0.1.0-SNAPSHOT"

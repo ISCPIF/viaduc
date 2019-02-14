@@ -28,21 +28,21 @@ object ApiImpl extends shared.Api {
       case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
       case false => */
         val parc = Parc3D()
+        parc.alpha = parameters.alpha
+        parc.ip = parameters.ip
+        parc.it = parameters.it
         parc.l = parameters.l
         parc.g = parameters.g
         parc.M = parameters.M
-        parc.c = parameters.c
         parc.p = parameters.p
         parc.a = parameters.a
-        parc.e = parameters.e
         parc.eta = parameters.eta
         parc.phi = parameters.phi
         parc.phi2 = parameters.phi2
-        parc.d = parameters.d
         parc.del = parameters.del
-        parc.h = 0
         parc.mp = parameters.mp
         parc.mt = parameters.mt
+        parc.e = parameters.e
 
         val rng = new util.Random(42)
 
@@ -67,7 +67,7 @@ object ApiImpl extends shared.Api {
 
         val vk = KernelComputation(
           dynamic = parc.dynamic,
-          depth = 18,
+          depth = 15,
           zone = Vector((parameters.Cmin, parameters.Cmax *100), (parameters.Amin, parameters.Amax ), (parameters.Tmin, parameters.Tmax)),
           // controls = Vector((0.02 to 0.4 by 0.02 ))
           controls = (x: Vector[Double]) =>
@@ -79,8 +79,8 @@ object ApiImpl extends shared.Api {
 
         val (ak, steps) = approximate(vk, rng)
         val fileName = s"KernelBin_Cmin${parameters.Cmin}Cmax${parameters.Cmax}Amin${parameters.Amin}Amax${parameters.Amax}" +
-          s"Tmin${parameters.Tmin}Tmax${parameters.Tmax}Emin${emin}Emax${emax}" +
-          s"Zmin${zmin}Zmax${zmax}.bin"
+          s"Tmin${parameters.Tmin}Tmax${parameters.Tmax}Emin${emin}Emax${emax}__depth${vk.depth}" +
+          s"Zmin${zmin}Zmax${zmax}"
        // println(Settings.defaultViaducDirectory)
         println("done approximating")
         save(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcBinary_${fileName}.bin")
@@ -109,16 +109,12 @@ object ApiImpl extends shared.Api {
         parc.l = parameters1.l
         parc.g = parameters1.g
         parc.M = parameters1.M
-        parc.c = parameters1.c
         parc.p = parameters1.p
         parc.a = parameters1.a
-        parc.e = parameters1.e
         parc.eta = parameters1.eta
         parc.phi = parameters1.phi
         parc.phi2 = parameters1.phi2
-        parc.d = parameters1.d
         parc.del = parameters1.del
-        parc.h = 0
         parc.mp = parameters1.mp
         parc.mt = parameters1.mt
 
@@ -211,6 +207,8 @@ object ApiImpl extends shared.Api {
     val ak2 = load[Tree[KernelContent]](f2)
     val result = learnIntersection(ak1,ak2)
     saveVTK3D(result, Settings.defaultViaducDirectory / s"inter_3D_D${f1}_AND_${f2}.vtk")
+   // saveHyperRectangles(result, s"inter_3D_D${f1}_AND_${f2}.txt")
+    saveVTK3D(result, s"inter_3D_D${f1}_AND_${f2}.vtk")
 
   }
 
