@@ -1,4 +1,4 @@
-package fr.iscpif.app
+package simpark.app
 
 import simpark.model.Parc3D
 import viabilitree.export.{saveHyperRectangles, saveVTK3D}

@@ -1,4 +1,4 @@
-package fr.iscpif.client
+package simpark.client
 
 object CAT_RK4 {
 

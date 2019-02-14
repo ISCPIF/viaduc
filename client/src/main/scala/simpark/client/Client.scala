@@ -1,10 +1,10 @@
-package fr.iscpif.client
+package simpark.client
 
 import java.nio.ByteBuffer
 
-import fr.iscpif.client.CAT_RK4._
-import fr.iscpif.client.SlidersUtils._
-import fr.iscpif.client.File2shapes._
+import CAT_RK4._
+import SlidersUtils._
+import File2shapes._
 import boopickle.Default._
 import org.scalajs.dom
 

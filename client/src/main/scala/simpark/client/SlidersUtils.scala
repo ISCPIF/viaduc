@@ -1,6 +1,4 @@
-package fr.iscpif.client
-
-
+package simpark.client
 
 import scalatags.JsDom.all.{div, _}
 import scaladget.tools.JsRxTags._

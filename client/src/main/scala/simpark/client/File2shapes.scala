@@ -1,4 +1,4 @@
-package fr.iscpif.client
+package simpark.client
 
 import com.definitelyscala.plotlyjs.Shape
 import org.scalajs.dom

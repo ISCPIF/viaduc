@@ -1,4 +1,4 @@
-package fr.iscpif.client
+package simpark.client
 
 import java.awt.image.Kernel
 

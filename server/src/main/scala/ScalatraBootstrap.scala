@@ -1,6 +1,7 @@
-import fr.iscpif.app._
+import simpark.app._
 import org.scalatra._
 import javax.servlet.ServletContext
+import simpark.app.Servlet
 
 
 class ScalatraBootstrap extends LifeCycle {

@@ -1,4 +1,4 @@
-package fr.iscpif.client
+package simpark.client
 
 import simpark.shared.Data._
 

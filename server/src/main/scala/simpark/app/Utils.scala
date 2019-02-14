@@ -1,4 +1,4 @@
-package fr.iscpif.app
+package simpark.app
 
 import java.net.InetAddress
 import scala.util.Try

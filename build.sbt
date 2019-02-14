@@ -2,7 +2,7 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 
 
-val Organization = "fr.iscpif.simpark"
+val Organization = "simpark"
 val Name = "simparc-UI"
 val Version = "0.1.0-SNAPSHOT"
 val ScalaVersion = "2.12.8"

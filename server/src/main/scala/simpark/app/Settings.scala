@@ -1,4 +1,4 @@
-package fr.iscpif.app
+package simpark.app
 
 import better.files._
 
