@@ -69,10 +69,16 @@ lazy val server = project.in(file("server")) settings(
   )
 ) dependsOn (shared, model) enablePlugins (ScalatraPlugin)
 
-lazy val model = project.in(file("model")) settings (
+lazy val model = project.in(file("model")) enablePlugins(SbtOsgi) settings (
   organization := Organization,
   libraryDependencies += "fr.iscpif.viabilitree" %% "export" % viabilitreeVersion,
   libraryDependencies += "fr.iscpif.viabilitree" %% "viability" % viabilitreeVersion,
+
+  OsgiKeys.exportPackage := Seq("simpark.*"),
+  OsgiKeys.importPackage := Seq("*;resolution:=optional"),
+  OsgiKeys.privatePackage := Seq("!scala.*,*"),
+  OsgiKeys.requireCapability := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"""",
+  osgiSettings
 )
 
 
