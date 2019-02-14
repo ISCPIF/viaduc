@@ -5,7 +5,7 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 val Organization = "fr.iscpif"
 val Name = "simparc-UI"
 val Version = "0.1.0-SNAPSHOT"
-val ScalaVersion = "2.12.4"
+val ScalaVersion = "2.12.8"
 val scalatraVersion = "2.5.1"
 val jettyVersion = "9.4.6.v20170531"
 val json4sVersion = "3.5.2"
