@@ -3,7 +3,7 @@ package fr.iscpif.app
 import java.net.InetAddress
 import scala.util.Try
 import better.files._
-import shared.Data._
+import simpark.shared.Data._
 
 object Utils {
 

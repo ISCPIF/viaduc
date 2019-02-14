@@ -2,7 +2,7 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 
 
-val Organization = "fr.iscpif"
+val Organization = "fr.iscpif.simpark"
 val Name = "simparc-UI"
 val Version = "0.1.0-SNAPSHOT"
 val ScalaVersion = "2.12.8"
@@ -64,11 +64,17 @@ lazy val server = project.in(file("server")) settings(
     "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
     "org.eclipse.jetty" % "jetty-webapp" % jettyVersion,
     "org.eclipse.jetty" % "jetty-server" % jettyVersion,
-    "fr.iscpif.viabilitree" %% "export" % viabilitreeVersion,
-    "fr.iscpif.viabilitree" %% "viability" % viabilitreeVersion,
+
     "com.github.pathikrit" %% "better-files" % betterFilesVersion
   )
-) dependsOn (shared) enablePlugins (ScalatraPlugin)
+) dependsOn (shared, model) enablePlugins (ScalatraPlugin)
+
+lazy val model = project.in(file("model")) settings (
+  organization := Organization,
+  libraryDependencies += "fr.iscpif.viabilitree" %% "export" % viabilitreeVersion,
+  libraryDependencies += "fr.iscpif.viabilitree" %% "viability" % viabilitreeVersion,
+)
+
 
 lazy val go = taskKey[Unit]("go")
 

@@ -3,20 +3,22 @@ package fr.iscpif.app
 import java.awt.Desktop
 
 import better.files._
-import fr.iscpif.app.Parc2DViabilityKernel._
+import Parc2DViabilityKernel._
 import scalaz.Alpha.M
+import simpark.model.Parc3D
 import viabilitree.export._
 import viabilitree.viability._
 import viabilitree.viability.kernel._
 import viabilitree.approximation.{learnIntersection, volume}
 import viabilitree.kdtree._
-import shared.Data._
+
 import util._
 import math._
 import viabilitree.viability.kernel.KernelComputation
 
 import scala.io.Source
-
+import simpark.shared
+import simpark.shared.Data._
 
 object ApiImpl extends shared.Api {
 
@@ -27,22 +29,22 @@ object ApiImpl extends shared.Api {
     resFile.exists match {
       case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
       case false => */
-        val parc = Parc3D()
-        parc.alpha = parameters.alpha
-        parc.ip = parameters.ip
-        parc.it = parameters.it
-        parc.l = parameters.l
-        parc.g = parameters.g
-        parc.M = parameters.M
-        parc.p = parameters.p
-        parc.a = parameters.a
-        parc.eta = parameters.eta
-        parc.phi = parameters.phi
-        parc.phi2 = parameters.phi2
-        parc.del = parameters.del
-        parc.mp = parameters.mp
-        parc.mt = parameters.mt
-        parc.e = parameters.e
+        val parc = Parc3D(
+          alpha = parameters.alpha,
+          ip = parameters.ip,
+          it = parameters.it,
+          l = parameters.l,
+          g = parameters.g,
+          M = parameters.M,
+          p = parameters.p,
+          a = parameters.a,
+          eta = parameters.eta,
+          phi = parameters.phi,
+          phi2 = parameters.phi2,
+          del = parameters.del,
+          mp = parameters.mp,
+          mt = parameters.mt,
+          e = parameters.e)
 
         val rng = new util.Random(42)
 
@@ -105,18 +107,18 @@ object ApiImpl extends shared.Api {
     resFile.exists match {
       case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
       case false =>
-        val parc = Parc3D()
-        parc.l = parameters1.l
-        parc.g = parameters1.g
-        parc.M = parameters1.M
-        parc.p = parameters1.p
-        parc.a = parameters1.a
-        parc.eta = parameters1.eta
-        parc.phi = parameters1.phi
-        parc.phi2 = parameters1.phi2
-        parc.del = parameters1.del
-        parc.mp = parameters1.mp
-        parc.mt = parameters1.mt
+        val parc = Parc3D(
+          l = parameters1.l,
+          g = parameters1.g,
+          M = parameters1.M,
+          p = parameters1.p,
+          a = parameters1.a,
+          eta = parameters1.eta,
+          phi = parameters1.phi,
+          phi2 = parameters1.phi2,
+          del = parameters1.del,
+          mp = parameters1.mp,
+          mt = parameters1.mt)
 
         implicit val rng = new util.Random(42)
 

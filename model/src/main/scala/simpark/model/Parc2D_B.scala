@@ -1,6 +1,6 @@
-package fr.iscpif.app
+package simpark.model
 
-import viabilitree.model._
+import viabilitree.model.Dynamic
 
 case class Parc2D_B(
                      integrationStep: Double = 0.0001,

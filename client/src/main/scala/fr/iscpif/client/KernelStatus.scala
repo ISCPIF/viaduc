@@ -1,6 +1,6 @@
 package fr.iscpif.client
 
-import shared.Data._
+import simpark.shared.Data._
 
 sealed trait KernelStatus {
   def message: String

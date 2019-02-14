@@ -10,8 +10,8 @@ import scalatags.JsDom
 import scalatags.JsDom.all.{div, marginTop, paddingLeft, span}
 import scaladget.bootstrapslider._
 import collection._
-import shared.Api
-import shared.Data._
+import simpark.shared.Api
+import simpark.shared.Data._
 
 object Utils {
 

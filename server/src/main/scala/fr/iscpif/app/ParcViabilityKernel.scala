@@ -1,5 +1,6 @@
 package fr.iscpif.app
 
+import simpark.model.Parc3D
 import viabilitree.export.{saveHyperRectangles, saveVTK3D}
 import viabilitree.viability._
 import viabilitree.viability.kernel._

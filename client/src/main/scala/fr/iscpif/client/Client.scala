@@ -48,10 +48,10 @@ import rx._
 import scaladget.bootstrapnative.bsn._
 import Utils._
 
-//import shared.Api
+//import simpark.shared.Api
 //import shared.Data._
-import shared.Api
-import shared.Data._
+import simpark.shared.Api
+import simpark.shared.Data._
 
 
 import scaladget.bootstrapslider._
