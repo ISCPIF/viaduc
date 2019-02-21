@@ -22,7 +22,7 @@ object AutowireServer extends autowire.Server[ByteBuffer, Pickler, Pickler] {
 
 class Servlet extends ScalatraServlet {
 
-  val basePath = "shared"
+  val basePath = "simpark/shared"
 
   get("/") {
     contentType = "text/html"
@@ -42,7 +42,6 @@ class Servlet extends ScalatraServlet {
   }
 
   post(s"/$basePath/*") {
-    println("PAT " + basePath)
     val req = Await.result({
       val is = request.getInputStream
       val bytes: Array[Byte] = Iterator.continually(is.read()).takeWhile(_ != -1).map(_.asInstanceOf[Byte]).toArray[Byte]
