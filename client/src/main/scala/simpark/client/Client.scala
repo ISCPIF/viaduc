@@ -47,6 +47,7 @@ import scala.util.{Failure, Success}
 import rx._
 import scaladget.bootstrapnative.bsn._
 import Utils._
+import KernelStatus._
 
 //import simpark.shared.Api
 //import shared.Data._
@@ -438,17 +439,17 @@ object Client {
 */
     /** *************** Noyau *********************/
 
-    val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
+   // val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
 
     val addButtonVideOrNot = button("Show Kernel").render
 
     lazy val addButtonCalc = button("Compute Kernel",
       onclick := { () =>
-        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+     //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
         Post[Api].CalcKernel(sliders2kernelParam(sliders, slidersDouble)).call()
           .foreach { kr: KernelResult =>
-            kernelStatus() = KernelStatus.computedKernel(kr)
+         //   kernelStatus() = KernelStatus.computedKernel(kr)
 
           }
       }
@@ -458,7 +459,7 @@ object Client {
 
     lazy val addButtonIntersection = button("Intersect Kernels",
       onclick := { () =>
-        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+      //  kernelStatus() = KernelStatus.COMPUTING_KERNEL
         val file1 = document.getElementById("file_inter1").asInstanceOf[HTMLInputElement].files.item(0)
         val file2 = document.getElementById("file_inter2").asInstanceOf[HTMLInputElement].files.item(0)
         val f1 = file1.name
@@ -472,12 +473,12 @@ object Client {
 
     lazy val addButtonInter = button("Intersect Kernels",
       onclick := { () =>
-        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+     //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
         val parameters = sliders2kernelParam(sliders, slidersDouble)
 
         Post[Api].InterKernels(parameters,parameters).call().foreach { kr: KernelResult =>
-          kernelStatus() = KernelStatus.computedKernel(kr)
+    //      kernelStatus() = KernelStatus.computedKernel(kr)
         }
       }
     )
@@ -747,7 +748,7 @@ object Client {
         h2("Step 3 Compute your viability kernel: "),
         div(addButtonCalc),
         p(
-          Rx {
+        /*  Rx {
             kernelStatus() match {
               case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
                 kr.message
@@ -763,7 +764,7 @@ object Client {
                     }
                 }
             }
-          }
+          } */
         ),
         div(input(`type` := "file", id := "file_input").render),
         div(showKernelbutton),

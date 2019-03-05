@@ -3,7 +3,7 @@ package simpark.model
 import viabilitree.model.Dynamic
 
 case class Parc3D(
-  integrationStep: Double = 0.01,
+  integrationStep: Double = 0.1,
   timeStep: Double = 0.05,
   alpha: Double= 0.1,
   ip: Double = 0.01,

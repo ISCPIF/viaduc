@@ -1,24 +1,16 @@
 package simpark.app
 
-import java.awt.Desktop
-
-import better.files._
-import Parc2DViabilityKernel._
-import scalaz.Alpha.M
+import simpark.app.Parc2DViabilityKernel._
 import simpark.model.Parc3D
-import viabilitree.export._
-import viabilitree.viability._
-import viabilitree.viability.kernel._
-import viabilitree.approximation.{learnIntersection, volume}
-import viabilitree.kdtree._
-
-import util._
-import math._
-import viabilitree.viability.kernel.KernelComputation
-
-import scala.io.Source
 import simpark.shared
 import simpark.shared.Data._
+import viabilitree.approximation.{learnIntersection, volume}
+import viabilitree.export._
+import viabilitree.kdtree._
+import viabilitree.viability._
+import viabilitree.viability.kernel.{KernelComputation, _}
+
+import scala.math._
 
 object ApiImpl extends shared.Api {
 
@@ -48,30 +40,26 @@ object ApiImpl extends shared.Api {
 
         val rng = new util.Random(42)
 
-        var zmax = parameters.zetaMax
-        var zmin = parameters.zetaMin * 0.1
 
-        if(parameters.zetaMin > parameters.zetaMax){
-          zmin = parameters.zetaMax
-          zmax = parameters.zetaMin
-        }
+    var zmax = max(parameters.zetaMax,parameters.zetaMin)
+    var zmin = min(parameters.zetaMax,parameters.zetaMin)
+    var emax = max(parameters.epsMax,parameters.epsMin)
+    var emin = min(parameters.epsMax,parameters.epsMin)
+    var Amax = max(parameters.Amax, parameters.Amin)
+    var Amin = min(parameters.Amax, parameters.Amin)
+    var Cmax = max(parameters.Cmax, parameters.Cmin)
+    var Cmin = min(parameters.Cmax, parameters.Cmin)
+    var Tmax = max(parameters.Tmax, parameters.Tmin)
+    var Tmin = min(parameters.Tmax, parameters.Tmin)
 
-        var emax = parameters.epsMax
-        var emin = parameters.epsMin
 
-        if(parameters.epsMin > parameters.epsMax) {
-          emax = parameters.epsMin
-          emin = parameters.epsMax
-        }
+    println(s"alpha : ${parc.alpha} emin : $emin, emax: $emax, zmin: $zmin, zmax : $zmax, C : ${Cmin}, ${Cmax}," +
+      s" A: ${Amin},  A: ${Amax}, T: ${Tmin},  T: ${Tmax}")
 
-        println(s"emin : $emin, emax: $emax, zmin: $zmin, zmax : $zmax, C : ${parameters.Cmin}, ${parameters.Cmax}," +
-          s" A: ${parameters.Amin},  A: ${parameters.Amax}, T: ${parameters.Tmin},  T: ${parameters.Tmax}")
-
-        val vk = KernelComputation(
-          dynamic = parc.dynamic,
-          depth = 15,
-          zone = Vector((parameters.Cmin, parameters.Cmax *100), (parameters.Amin, parameters.Amax ), (parameters.Tmin, parameters.Tmax)),
-          // controls = Vector((0.02 to 0.4 by 0.02 ))
+    val vk = KernelComputation(
+      dynamic = parc.dynamic,
+      depth = 18,
+      zone = Vector((Cmin, Cmax), (Amin, Amax ), (Tmin, Tmax)),
           controls = (x: Vector[Double]) =>
             for {
               c1 <- (zmin to zmax by 0.001)
