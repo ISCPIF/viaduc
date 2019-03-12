@@ -15,12 +15,14 @@ import scala.math._
 object ApiImpl extends shared.Api {
 
   // paramètres : max et min sur CAT, parametres de la dynamique, controles
-  def CalcKernel(parameters: KernelParameters): KernelResult = {
+  def CalcKernel(parameters: KernelParameters, boolEps:  Boolean, boolZeta: Boolean): KernelResult = {
 
 /*    val resFile = Utils.file(parameters)
     resFile.exists match {
       case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
       case false => */
+    println(boolEps)
+    println(boolZeta)
         val parc = Parc3D(
           alpha = parameters.alpha,
           ip = parameters.ip,
@@ -41,10 +43,10 @@ object ApiImpl extends shared.Api {
         val rng = new util.Random(42)
 
 
-    var zmax = max(parameters.zetaMax,parameters.zetaMin)
-    var zmin = min(parameters.zetaMax,parameters.zetaMin)
     var emax = max(parameters.epsMax,parameters.epsMin)
     var emin = min(parameters.epsMax,parameters.epsMin)
+    var zmax = max(parameters.zetaMax,parameters.zetaMin)
+    var zmin = min(parameters.zetaMax,parameters.zetaMin)
     var Amax = max(parameters.Amax, parameters.Amin)
     var Amin = min(parameters.Amax, parameters.Amin)
     var Cmax = max(parameters.Cmax, parameters.Cmin)
@@ -52,18 +54,29 @@ object ApiImpl extends shared.Api {
     var Tmax = max(parameters.Tmax, parameters.Tmin)
     var Tmin = min(parameters.Tmax, parameters.Tmin)
 
+    if (!boolZeta){
+      zmax = (parameters.zetaMax+parameters.zetaMin)/2
+      zmin = (parameters.zetaMax+parameters.zetaMin)/2
+    }
+
+    if (!boolEps){
+      println("booleps false")
+      emax = (parameters.epsMax+parameters.epsMin)/2
+      emin = (parameters.epsMax+parameters.epsMin)/2
+    }
+
 
     println(s"alpha : ${parc.alpha} emin : $emin, emax: $emax, zmin: $zmin, zmax : $zmax, C : ${Cmin}, ${Cmax}," +
       s" A: ${Amin},  A: ${Amax}, T: ${Tmin},  T: ${Tmax}")
 
     val vk = KernelComputation(
       dynamic = parc.dynamic,
-      depth = 18,
+      depth = 15,
       zone = Vector((Cmin, Cmax), (Amin, Amax ), (Tmin, Tmax)),
           controls = (x: Vector[Double]) =>
             for {
-              c1 <- (zmin to zmax by 0.001)
-              c2 <- (emin to emax by 10.0)
+              c1 <- zmin to zmax by 0.001
+              c2 <- emin to emax by 10.0
             } yield Control(c1, c2)
         )
 
@@ -72,15 +85,12 @@ object ApiImpl extends shared.Api {
           s"Tmin${parameters.Tmin}Tmax${parameters.Tmax}Emin${emin}Emax${emax}__depth${vk.depth}" +
           s"Zmin${zmin}Zmax${zmax}"
        // println(Settings.defaultViaducDirectory)
-        println("done approximating")
         save(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcBinary_${fileName}.bin")
-        println("done saving bin")
         //saveVTK3D(ak, Settings.tmpDirectory / s"resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
         val kernelFile = Utils.file(parameters)
         saveHyperRectangles(vk)(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcRectangles_${fileName}.txt")
-        println("done saving hyperRectangle")
         saveVTK3D(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcVtk_${fileName}.vtk")
-        println("done saving vtk")
+
 
         println(s"steps : ${steps}")
 

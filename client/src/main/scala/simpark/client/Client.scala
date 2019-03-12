@@ -437,6 +437,7 @@ object Client {
 
     }
 */
+
     /** *************** Noyau *********************/
 
    // val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
@@ -447,7 +448,7 @@ object Client {
       onclick := { () =>
      //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
-        Post[Api].CalcKernel(sliders2kernelParam(sliders, slidersDouble)).call()
+        Post[Api].CalcKernel(sliders2kernelParam(sliders, slidersDouble),check_Eps.checked,check_zeta.checked).call()
           .foreach { kr: KernelResult =>
          //   kernelStatus() = KernelStatus.computedKernel(kr)
 
@@ -741,8 +742,8 @@ object Client {
         p("Epsilon represents the effort to restore the environment, 100 is a maximum effort and 0 is no effort at all"),
         div(foosDouble(0)),
         div(p(check_zeta, "Use the control zeta")),
-        p("Zeta represents the areas reachable by the tourists, at 0.2 we consiter that the pars is completely open, " +
-          "at 0.01 we consider that only a small portion of the parc is poen to tourism"),
+        p("Zeta represents the areas reachable by the tourists, at 0.2 we consiter that the parc is completely open, " +
+          "at 0.01 we consider that only a small portion of the parc is open to tourism"),
         div(foosDouble(1)),
 
         h2("Step 3 Compute your viability kernel: "),
