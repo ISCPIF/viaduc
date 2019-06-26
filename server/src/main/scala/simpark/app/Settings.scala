@@ -6,7 +6,7 @@ object Settings {
 
  // val defaultViaducDirectory = File(System.getProperty("user.home")) / s".viaduc/${Utils.fixHostName}/"
 
-  val defaultViaducDirectory = File(System.getProperty("user.home")) / s"/Desktop/Kernelresults/"
+  val defaultViaducDirectory = File(System.getProperty("user.dir")) / s"results"
 
-  val tmpDirectory = defaultViaducDirectory / "tmp"
+ // val tmpDirectory = defaultViaducDirectory / "tmp"
 }

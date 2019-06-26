@@ -16,7 +16,7 @@ object KernelStatus {
     def kernelResult = kR
   }
 
-  val NOT_COMPUTED_YED = KernelStatus("Kernel not computed yet")
+  val NOT_COMPUTED_YET = KernelStatus("Kernel not computed yet")
   val COMPUTING_KERNEL = KernelStatus("Computing kernel, please wait")
 
   def computedKernel(result: KernelResult) = KernelStatus("Kernel computed", Some(result))

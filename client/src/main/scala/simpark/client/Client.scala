@@ -47,8 +47,8 @@ import scala.util.{Failure, Success}
 import rx._
 import scaladget.bootstrapnative.bsn._
 import Utils._
-import KernelStatus._
 
+import KernelStatus._
 //import simpark.shared.Api
 //import shared.Data._
 import simpark.shared.Api
@@ -208,13 +208,13 @@ object Client {
     /* Calcul de CAT RK4 */
 
     // controles et valeur init:
-/*
+
     var eps = 100.0
     var zeta = 0.1
     var Cinit = box_Cinit.value.toDouble
     var Ainit = box_Ainit.value.toDouble
     var Tinit = box_Tinit.value.toDouble
-    var t_max = 10 //10000
+    var t_max = 10000 //10
 
 
     var Cval = Array(Cinit / 100)
@@ -225,10 +225,23 @@ object Client {
     // calcul:
     for (t <- 1 to t_max) {
 
-      val Catinit = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble,
-        sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
-        sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cval.last * 100, Aval.last, Tval.last)
+      val Catinit = compute_CAT_RK4(zeta,
+        sliders(1).getValue().toString.toDouble,
+        sliders(0).getValue().toString.toDouble,
+        sliders(3).getValue().toString.toDouble,
+        sliders(10).getValue().toString.toDouble,
+        sliders(2).getValue().toString.toDouble,
+        sliders(11).getValue().toString.toDouble,
+        sliders(13).getValue().toString.toDouble,
+        sliders(4).getValue().toString.toDouble,
+        eps, sliders(12).getValue().toString.toDouble,
+        sliders(14).getValue().toString.toDouble,
+        sliders(5).getValue().toString.toDouble,
+        sliders(6).getValue().toString.toDouble,
+        sliders(8).getValue().toString.toDouble,
+        sliders(7).getValue().toString.toDouble,
+        sliders(9).getValue().toString.toDouble,
+        Cval.last * 100, Aval.last, Tval.last)
 
       Cval = concat(Cval, Array(Catinit(0) / 100))
       Aval = concat(Aval, Array(Catinit(1)))
@@ -276,7 +289,7 @@ object Client {
       js.Array(data1, data2, data3),
       layout)
 
-*/
+
     /** ************* Bouton  Crise ***************/
 
 
@@ -294,7 +307,7 @@ object Client {
 
     val buttonTryThis = button("Try this !").render
     val buttonTryThis2 = button("Try this !").render
-/*
+
 
     /** ******** bouton pour rafraichir le graphe : ************/
 
@@ -306,7 +319,7 @@ object Client {
 
       val eps = 100.0
       val zeta = 0.1
-      val t_max = 10 //10000
+      val t_max = 10000 // 10
 
       var Cinit = box_Cinit.value.toDouble
       var Ainit = box_Ainit.value.toDouble
@@ -320,19 +333,41 @@ object Client {
       val coefAc = 100 // coeficient Animaux crise
       val Tc = 10 // temps t crise
 
-      var Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble,
-        sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-        eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
-        sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cinit, Ainit, Tinit)
-
+      val Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble,
+        sliders(0).getValue().toString.toDouble,
+        sliders(3).getValue().toString.toDouble,
+        sliders(10).getValue().toString.toDouble,
+        sliders(2).getValue().toString.toDouble,
+        sliders(11).getValue().toString.toDouble,
+        sliders(13).getValue().toString.toDouble,
+        sliders(4).getValue().toString.toDouble,
+        eps, sliders(12).getValue().toString.toDouble,
+        sliders(14).getValue().toString.toDouble,
+        sliders(5).getValue().toString.toDouble,
+        sliders(6).getValue().toString.toDouble,
+        sliders(8).getValue().toString.toDouble,
+        sliders(7).getValue().toString.toDouble,
+        sliders(9).getValue().toString.toDouble,
+        Cinit, Ainit, Tinit)
       // calcul:
       for (t <- 1 to t_max) {
 
-        Cat = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble, sliders(0).getValue().toString.toDouble, sliders(3).getValue().toString.toDouble,
-          sliders(10).getValue().toString.toDouble, sliders(2).getValue().toString.toDouble, sliders(11).getValue().toString.toDouble, sliders(13).getValue().toString.toDouble, sliders(4).getValue().toString.toDouble,
-          eps, sliders(12).getValue().toString.toDouble, sliders(14).getValue().toString.toDouble, sliders(5).getValue().toString.toDouble, sliders(6).getValue().toString.toDouble,
-          sliders(8).getValue().toString.toDouble, sliders(7).getValue().toString.toDouble, sliders(9).getValue().toString.toDouble, Cval.last, Aval.last, Tval.last)
-
+        val Catinit = compute_CAT_RK4(zeta, sliders(1).getValue().toString.toDouble,
+          sliders(0).getValue().toString.toDouble,
+          sliders(3).getValue().toString.toDouble,
+          sliders(10).getValue().toString.toDouble,
+          sliders(2).getValue().toString.toDouble,
+          sliders(11).getValue().toString.toDouble,
+          sliders(13).getValue().toString.toDouble,
+          sliders(4).getValue().toString.toDouble,
+          eps, sliders(12).getValue().toString.toDouble,
+          sliders(14).getValue().toString.toDouble,
+          sliders(5).getValue().toString.toDouble,
+          sliders(6).getValue().toString.toDouble,
+          sliders(8).getValue().toString.toDouble,
+          sliders(7).getValue().toString.toDouble,
+          sliders(9).getValue().toString.toDouble,
+          Cval.last , Aval.last, Tval.last)
 
         if ((t == Tc) && (check_crise.checked)) {
           println("crisis")
@@ -436,21 +471,21 @@ object Client {
         layout)
 
     }
-*/
+
 
     /** *************** Noyau *********************/
 
-   // val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YED)
+    val kernelStatus: Var[KernelStatus] = Var(KernelStatus.NOT_COMPUTED_YET)
 
     val addButtonVideOrNot = button("Show Kernel").render
 
     lazy val addButtonCalc = button("Compute Kernel",
       onclick := { () =>
-     //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
+        kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
         Post[Api].CalcKernel(sliders2kernelParam(sliders, slidersDouble),check_Eps.checked,check_zeta.checked).call()
           .foreach { kr: KernelResult =>
-         //   kernelStatus() = KernelStatus.computedKernel(kr)
+            kernelStatus() = KernelStatus.computedKernel(kr)
 
           }
       }
@@ -460,7 +495,7 @@ object Client {
 
     lazy val addButtonIntersection = button("Intersect Kernels",
       onclick := { () =>
-      //  kernelStatus() = KernelStatus.COMPUTING_KERNEL
+     //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
         val file1 = document.getElementById("file_inter1").asInstanceOf[HTMLInputElement].files.item(0)
         val file2 = document.getElementById("file_inter2").asInstanceOf[HTMLInputElement].files.item(0)
         val f1 = file1.name
@@ -474,12 +509,12 @@ object Client {
 
     lazy val addButtonInter = button("Intersect Kernels",
       onclick := { () =>
-     //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
+   //     kernelStatus() = KernelStatus.COMPUTING_KERNEL
 
         val parameters = sliders2kernelParam(sliders, slidersDouble)
 
         Post[Api].InterKernels(parameters,parameters).call().foreach { kr: KernelResult =>
-    //      kernelStatus() = KernelStatus.computedKernel(kr)
+     //     kernelStatus() = KernelStatus.computedKernel(kr)
         }
       }
     )
@@ -732,10 +767,10 @@ object Client {
           " Here you can plot :"
         ),
 
-      //  div(buttonPlot),
+        div(buttonPlot),
 
         h2("Capital, number of Animals and number of tourists in function of time for the above parameters (no controls):"),
-  //      div(plotDiv.render),
+        div(plotDiv.render),
 
         h2("Step 1 :Choose the controls: "),
         div(p(check_Eps, "Use the control epsilon")),
@@ -749,31 +784,31 @@ object Client {
         h2("Step 3 Compute your viability kernel: "),
         div(addButtonCalc),
         p(
-        /*  Rx {
+          Rx {
             kernelStatus() match {
-              case kr@(KernelStatus.NOT_COMPUTED_YED | KernelStatus.COMPUTING_KERNEL) =>
+              case kr@(KernelStatus.NOT_COMPUTED_YET | KernelStatus.COMPUTING_KERNEL) =>
                 kr.message
               case ks: KernelStatus =>
                 ks.kernelResult match {
                   case None => "Weird case ..."
                   case Some(kr: KernelResult) =>
+                     val ks = kernelStatus.now
 
-                    // val kr = kernelStatus.now
                     s"${ks.message} :: " + {
                       if (kr.isResultEmpty) "Your Kernel is empty, please try again by changing your controls and/or your constraints."
                       else s"Congratulation, your Kernel is not empty ! ${kr.resultPath}"
                     }
                 }
             }
-          } */
+          }
         ),
         div(input(`type` := "file", id := "file_input").render),
         div(showKernelbutton),
-        div(KernelDiv0.render),
-        p(""),
         div(KernelDiv1.render),
         p(""),
         div(KernelDiv2.render),
+        p(""),
+        div(KernelDiv3.render),
         p(""),
         div(input(`type` := "file", id := "file_inter1").render, input(`type` := "file", id := "file_inter2").render),
         p(""),

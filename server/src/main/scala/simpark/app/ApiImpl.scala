@@ -17,10 +17,33 @@ object ApiImpl extends shared.Api {
   // paramètres : max et min sur CAT, parametres de la dynamique, controles
   def CalcKernel(parameters: KernelParameters, boolEps:  Boolean, boolZeta: Boolean): KernelResult = {
 
-/*    val resFile = Utils.file(parameters)
+    var emax = max(parameters.epsMax,parameters.epsMin)
+    var emin = min(parameters.epsMax,parameters.epsMin)
+    var zmax = max(parameters.zetaMax,parameters.zetaMin)
+    var zmin = min(parameters.zetaMax,parameters.zetaMin)
+    var Amax = max(parameters.Amax, parameters.Amin)
+    var Amin = min(parameters.Amax, parameters.Amin)
+    var Cmax = max(parameters.Cmax, parameters.Cmin)
+    var Cmin = min(parameters.Cmax, parameters.Cmin)
+    var Tmax = max(parameters.Tmax, parameters.Tmin)
+    var Tmin = min(parameters.Tmax, parameters.Tmin)
+
+    if (!boolZeta){
+      println("boolzeta false")
+      zmax = (parameters.zetaMax+parameters.zetaMin)/2
+      zmin = (parameters.zetaMax+parameters.zetaMin)/2
+    }
+
+    if (!boolEps){
+      println("booleps false")
+      emax = (parameters.epsMax+parameters.epsMin)/2
+      emin = (parameters.epsMax+parameters.epsMin)/2
+    }
+
+    val resFile = Utils.file(parameters, emin, emax, zmin, zmax)
     resFile.exists match {
       case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
-      case false => */
+      case false =>
     println(boolEps)
     println(boolZeta)
         val parc = Parc3D(
@@ -43,35 +66,12 @@ object ApiImpl extends shared.Api {
         val rng = new util.Random(42)
 
 
-    var emax = max(parameters.epsMax,parameters.epsMin)
-    var emin = min(parameters.epsMax,parameters.epsMin)
-    var zmax = max(parameters.zetaMax,parameters.zetaMin)
-    var zmin = min(parameters.zetaMax,parameters.zetaMin)
-    var Amax = max(parameters.Amax, parameters.Amin)
-    var Amin = min(parameters.Amax, parameters.Amin)
-    var Cmax = max(parameters.Cmax, parameters.Cmin)
-    var Cmin = min(parameters.Cmax, parameters.Cmin)
-    var Tmax = max(parameters.Tmax, parameters.Tmin)
-    var Tmin = min(parameters.Tmax, parameters.Tmin)
-
-    if (!boolZeta){
-      zmax = (parameters.zetaMax+parameters.zetaMin)/2
-      zmin = (parameters.zetaMax+parameters.zetaMin)/2
-    }
-
-    if (!boolEps){
-      println("booleps false")
-      emax = (parameters.epsMax+parameters.epsMin)/2
-      emin = (parameters.epsMax+parameters.epsMin)/2
-    }
-
-
     println(s"alpha : ${parc.alpha} emin : $emin, emax: $emax, zmin: $zmin, zmax : $zmax, C : ${Cmin}, ${Cmax}," +
       s" A: ${Amin},  A: ${Amax}, T: ${Tmin},  T: ${Tmax}")
 
     val vk = KernelComputation(
       dynamic = parc.dynamic,
-      depth = 15,
+      depth = 3,
       zone = Vector((Cmin, Cmax), (Amin, Amax ), (Tmin, Tmax)),
           controls = (x: Vector[Double]) =>
             for {
@@ -81,26 +81,36 @@ object ApiImpl extends shared.Api {
         )
 
         val (ak, steps) = approximate(vk, rng)
-        val fileName = s"KernelBin_Cmin${parameters.Cmin}Cmax${parameters.Cmax}Amin${parameters.Amin}Amax${parameters.Amax}" +
+
+        val fileName = s"Cmin${parameters.Cmin}Cmax${parameters.Cmax}Amin${parameters.Amin}Amax${parameters.Amax}" +
           s"Tmin${parameters.Tmin}Tmax${parameters.Tmax}Emin${emin}Emax${emax}__depth${vk.depth}" +
           s"Zmin${zmin}Zmax${zmax}"
-       // println(Settings.defaultViaducDirectory)
-        save(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcBinary_${fileName}.bin")
-        //saveVTK3D(ak, Settings.tmpDirectory / s"resparc3_2DDepth${vk.depth}2controls_TRYWeb2.vtk")
-        val kernelFile = Utils.file(parameters)
-        saveHyperRectangles(vk)(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcRectangles_${fileName}.txt")
-        saveVTK3D(ak, s"/Users/laetitiazaleski/Desktop/Kernelresults/ParcVtk_${fileName}.vtk")
+        println(Settings.defaultViaducDirectory)
+        save(ak, s"./${Settings.defaultViaducDirectory}/ParcBinary/${fileName}.bin")
+        saveHyperRectangles(vk)(ak, s"${Settings.defaultViaducDirectory}/ParcRectangles_${fileName}.txt")
+        saveVTK3D(ak, s"${Settings.defaultViaducDirectory}/ParcVtk/${fileName}.vtk")
 
+
+        val kernelFile = Settings.defaultViaducDirectory / s"ParcRectangles_${fileName}.txt"
 
         println(s"steps : ${steps}")
+        println(kernelFile.path)
+        println(kernelFile.name )
 
         KernelResult(kernelFile.toJava.getAbsolutePath, kernelFile.isEmpty)
     }
-  //}
+  }
 
   def InterKernels(parameters1: KernelParameters, parameters2: KernelParameters): KernelResult = {
 
-    val resFile = Utils.file(parameters1)
+
+    var emax = max(parameters1.epsMax,parameters1.epsMin)
+    var emin = min(parameters1.epsMax,parameters1.epsMin)
+    var zmax = max(parameters1.zetaMax,parameters1.zetaMin)
+    var zmin = min(parameters1.zetaMax,parameters1.zetaMin)
+
+
+    val resFile = Utils.file(parameters1, emin, emax, zmin, zmax)
 
     resFile.exists match {
       case true => KernelResult(resFile.toJava.getAbsolutePath, resFile.isEmpty)
@@ -122,20 +132,19 @@ object ApiImpl extends shared.Api {
 
 
         var zmax = parameters1.zetaMax //* 0.01
-        var zmin = parameters1.zetaMin //* 0.01
+      var zmin = parameters1.zetaMin //* 0.01
 
-        if(parameters1.zetaMin > parameters1.zetaMax){
+        if (parameters1.zetaMin > parameters1.zetaMax) {
           zmin = parameters1.zetaMax //* 0.01
           zmax = parameters1.zetaMin // * 0.01
         }
         var emax = parameters1.epsMax
         var emin = parameters1.epsMin
 
-        if(parameters1.epsMin > parameters1.epsMax) {
+        if (parameters1.epsMin > parameters1.epsMax) {
           emax = parameters1.epsMin
           emin = parameters1.epsMax
         }
-
 
 
         val vk1 = KernelComputation(
@@ -151,24 +160,24 @@ object ApiImpl extends shared.Api {
 
         )
 
-         zmax = parameters2.zetaMax  //* 0.01
-         zmin = parameters2.zetaMin //* 0.01
+        zmax = parameters2.zetaMax //* 0.01
+        zmin = parameters2.zetaMin //* 0.01
 
-        if(parameters1.zetaMin > parameters1.zetaMax){
+        if (parameters1.zetaMin > parameters1.zetaMax) {
           zmin = parameters2.zetaMax //* 0.01
           zmax = parameters2.zetaMin //* 0.01
         }
-         emax = parameters2.epsMax
-         emin = parameters2.epsMin
+        emax = parameters2.epsMax
+        emin = parameters2.epsMin
 
-        if(parameters2.epsMin > parameters1.epsMax) {
+        if (parameters2.epsMin > parameters1.epsMax) {
           emax = parameters2.epsMin
           emin = parameters2.epsMax
         }
 
         val vk2 = KernelComputation(
           dynamic = parc.dynamic,
-          depth = 12,
+          depth = 15,
           zone = Vector((parameters2.Cmin, parameters2.Cmax), (parameters2.Amin, parameters2.Amax), (parameters2.Tmin, parameters2.Tmax)),
           // controls = Vector((0.02 to 0.4 by 0.02 ))
           controls = (x: Vector[Double]) =>
@@ -189,14 +198,13 @@ object ApiImpl extends shared.Api {
 
         //saveVTK3D(inter, "/tmp/inter.vtk")
 
-        val kernelFile = Utils.file(parameters1)
-       // saveHyperRectangles(vk1)(inter, kernelFile)
+        val kernelFile = Utils.file(parameters1, emin, emax, zmin, zmax)
+        // saveHyperRectangles(vk1)(inter, kernelFile)
         saveVTK3D(inter, Settings.defaultViaducDirectory / s"inter_3D_D${vk1.depth}_V_${c_min}_${c_max}_${a_min}_" +
           s"${a_max}_${t_min}_${t_max}_C_${eps_min}_${eps_max}_${zeta_min}_${zeta_max}.vtk")
         println(steps1)
 
         KernelResult(kernelFile.toJava.getAbsolutePath, kernelFile.isEmpty)
-
     }
   }
 
@@ -207,8 +215,14 @@ object ApiImpl extends shared.Api {
     val ak2 = load[Tree[KernelContent]](f2)
     val result = learnIntersection(ak1,ak2)
     saveVTK3D(result, Settings.defaultViaducDirectory / s"inter_3D_D${f1}_AND_${f2}.vtk")
-   // saveHyperRectangles(result, s"inter_3D_D${f1}_AND_${f2}.txt")
+    // saveHyperRectangles(result, s"inter_3D_D${f1}_AND_${f2}.txt")
     saveVTK3D(result, s"inter_3D_D${f1}_AND_${f2}.vtk")
+
+  }
+
+
+  def ClosestKernel(f1 : String, f2 : String): Unit ={
+
 
   }
 

@@ -3,7 +3,7 @@ package simpark.model
 import viabilitree.model.Dynamic
 
 case class Parc3D(
-  integrationStep: Double = 0.1,
+  integrationStep: Double = 0.0001,
   timeStep: Double = 0.05,
   alpha: Double= 0.1,
   ip: Double = 0.01,
@@ -21,13 +21,29 @@ case class Parc3D(
   mp: Double = 14.0,
   mt: Double = 25.0) {
 
-  def dynamic(state: Vector[Double], control: Vector[Double]) = {
-    // A: state(0), T: state(1), E: state(2)
-    def CDot(state: Vector[Double], t: Double) =  -del * state(0) + p * state(1) * mp * ip +  state(2) * mt * it
-    def ADot(state: Vector[Double], t: Double) =  state(1) * g * (1 - state(1) / (1 + M / (1 + eta * state(2) / (control(1) + 1)))) - control(0) * l * state(1) * state(2) - p * state(1)
-    def TDot(state: Vector[Double], t: Double) =  state(2) * (- alpha * state(2) + (a * control(0) * state(1))/(state(1) + phi) + e*state(0) /(state(0)+ phi2*state(2) + phi2))
 
-    val dynamic = Dynamic(ADot, TDot, CDot)
+
+  def dynamic(state: Vector[Double], control: Vector[Double]) = {
+
+    def CDot(state: Vector[Double], t: Double)= (-del)*state(0) + p*state(1)*mp*ip + mt*state(2)*it  // Capital
+    // -delta * Cprev + p* Aprev * mp *ip + Tprev * mt *it
+    def ADot(state: Vector[Double], t: Double) = state(1)*g*(1-(state(1)/(1+M/(1+eta*state(2)/(1+control(1))))))-
+      control(0)*l*state(2) *state(1)-p*state(1)
+    // Aprev * g * ( 1 - (Aprev/ (1+ M/(1+eta*Tprev/(eps+1))))) - zeta*l*Aprev*Tprev - p*Aprev
+    def TDot(state: Vector[Double], t: Double)= state(2)*(-alpha*state(2) + a*control(0)*state(1)/(state(1)+phi) +
+      e*state(0)/(state(0)+phi2*state(2)+phi2))
+    //Tprev *(- alpha*Tprev + a*zeta*Aprev/(Aprev + phi) + e*Cprev/(Cprev+phi2*Tprev+phi2)
+
+   /* // A: state(0), T: state(1), E: state(2)
+    def CDot(state: Vector[Double], t: Double) =  -del * state(0) + p * state(1) * mp * ip +  state(2) * mt * it
+
+    def ADot(state: Vector[Double], t: Double) =  state(1) * g * (1 - (state(1) / (1 + M / (1 + eta *
+      state(2) / (control(1) + 1))))) - control(0) * l * state(1) * state(2) - p * state(1)
+
+    def TDot(state: Vector[Double], t: Double) =  state(2) * (- alpha * state(2) + (a * control(0) *
+      state(1))/(state(1) + phi) + e*state(0) /(state(0)+ phi2*state(2) + phi2)) */
+
+    val dynamic = Dynamic( CDot, ADot, TDot)
     dynamic.integrate(state.toArray, integrationStep, timeStep)
   }
 

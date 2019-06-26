@@ -91,8 +91,8 @@ object Parc2DViabilityKernel extends App {
 
                       println(steps)
 
-                      saveVTK3D(ak, Settings.tmpDirectory / s"resparc_3D_D${vk.depth}_V_${c_min}_${c_max}_${a_min}_${a_max}_${t_min}_${t_max}_C_${eps_min}_${eps_max}_${zeta_min}_${zeta_max}.vtk")
-                      saveHyperRectangles(vk)(ak, Settings.tmpDirectory / s"resparc3D_D${vk.depth}_V_${c_min}_${c_max}_${a_min}_${a_max}_${t_min}_${t_max}_C_${eps_min}_${eps_max}_${zeta_min}_${zeta_max}.txt")
+                      saveVTK3D(ak, Settings.defaultViaducDirectory / s"resparc_3D_D${vk.depth}_V_${c_min}_${c_max}_${a_min}_${a_max}_${t_min}_${t_max}_C_${eps_min}_${eps_max}_${zeta_min}_${zeta_max}.vtk")
+                      saveHyperRectangles(vk)(ak, Settings.defaultViaducDirectory / s"resparc3D_D${vk.depth}_V_${c_min}_${c_max}_${a_min}_${a_max}_${t_min}_${t_max}_C_${eps_min}_${eps_max}_${zeta_min}_${zeta_max}.txt")
 
                       eps_min = eps_min + EPSSTEP
                     }

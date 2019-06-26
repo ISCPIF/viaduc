@@ -13,8 +13,8 @@ object Utils {
       InetAddress.getLocalHost().getHostName()
     }.getOrElse("localhost")
 
-  def file(p: KernelParameters): File =
-    Settings.tmpDirectory /
-      s"${p.Cmax}_${p.Cmin}_${p.Amax}_${p.Amin}_${p.Tmax}_${p.Tmin}_${p.l}_${p.g}_${p.M}_${p.p}_${p.a}_${p.eta}_${p.phi}_${p.phi2}_${p.del}_${p.mp}_${p.mt}_${p.epsMin}_${p.epsMax}_${p.zetaMin}_${p.zetaMax}.txt"
 
+  def file(p: KernelParameters, emin: Double, emax: Double, zmin: Double, zmax: Double): File =
+    Settings.defaultViaducDirectory /
+      s"Cmin${p.Cmin}Cmax${p.Cmax}Amin${p.Amin}Amax${p.Amax}Tmin${p.Tmin}Tmax${p.Tmax}Emin${emin}Emax${emax}__Zmin${zmin}Zmax${zmax}.txt"
 }
