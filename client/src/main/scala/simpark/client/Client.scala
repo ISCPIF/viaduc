@@ -49,10 +49,10 @@ import scaladget.bootstrapnative.bsn._
 import Utils._
 
 import KernelStatus._
-//import simpark.shared.Api
-//import shared.Data._
+
 import simpark.shared.Api
 import simpark.shared.Data._
+import simpark.shared._
 
 
 import scaladget.bootstrapslider._
@@ -214,7 +214,7 @@ object Client {
     var Cinit = box_Cinit.value.toDouble
     var Ainit = box_Ainit.value.toDouble
     var Tinit = box_Tinit.value.toDouble
-    var t_max = 10000 //10
+    var t_max = 1000 //10
 
 
     var Cval = Array(Cinit / 100)
@@ -319,7 +319,7 @@ object Client {
 
       val eps = 100.0
       val zeta = 0.1
-      val t_max = 10000 // 10
+      val t_max = 1000 // 10
 
       var Cinit = box_Cinit.value.toDouble
       var Ainit = box_Ainit.value.toDouble
@@ -493,6 +493,18 @@ object Client {
     )
 
 
+    lazy val addButtonClosestKernel = button("Closest Kernel",
+      onclick := { () =>
+        kernelStatus() = KernelStatus.COMPUTING_KERNEL
+        Post[Api].ClosestKernel(sliders2kernelParam(sliders, slidersDouble)).call()
+          .foreach { kr: KernelResult =>
+            kernelStatus() = KernelStatus.computedKernel(kr)
+
+          }
+          }
+    )
+
+
     lazy val addButtonIntersection = button("Intersect Kernels",
       onclick := { () =>
      //   kernelStatus() = KernelStatus.COMPUTING_KERNEL
@@ -501,7 +513,7 @@ object Client {
         val f1 = file1.name
         val f2 = file2.name
 
-        Post[Api].IntersectionKernels(f1,f2).call()
+        Post[Api].IntersectionKernels(/*f1,f2*/).call()
       }
     )
 
@@ -804,6 +816,9 @@ object Client {
         ),
         div(input(`type` := "file", id := "file_input").render),
         div(showKernelbutton),
+        p(""),
+        div(addButtonClosestKernel),
+        p(""),
         div(KernelDiv1.render),
         p(""),
         div(KernelDiv2.render),
